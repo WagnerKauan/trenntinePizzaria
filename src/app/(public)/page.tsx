@@ -6,6 +6,7 @@ import { Header } from "./_components/header";
 import { Hero } from "./_components/hero";
 import { Promotions } from "./_components/promotins";
 import { getAllPromotions } from "@/utils/get-all-promotions";
+import { Steps } from "./_components/steps";
 
  
 
@@ -23,6 +24,8 @@ export default async function Home() {
       <FeaturedPizzas pizzas={pizzas} />
       
       <Promotions promotions={promotions} />
+
+      <Steps />
     </>
   );
 }

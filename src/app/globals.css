@@ -12,6 +12,7 @@
   --color-secondary-normal: #F77F00;
   --color-dark-normal: #2E2E2E;
   --color-dark-800: #1C1919;
+  --color-light-normal: #FAFAFA;
 }
 
 @theme inline {
