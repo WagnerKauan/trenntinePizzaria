@@ -1,0 +1,29 @@
+"use server";
+
+import { getAllPizzas } from "@/utils/get-all-pizzas";
+import { FeaturedPizzas } from "./_components/featuredPizzas";
+import { Header } from "./_components/header";
+import { Hero } from "./_components/hero";
+import { Promotions } from "./_components/promotins";
+import { getAllPromotions } from "@/utils/get-all-promotions";
+
+ 
+
+export default async function Home() {
+  
+  const pizzas = await getAllPizzas();
+  const promotions = await getAllPromotions();
+
+  return (
+    <>
+      <Header />
+
+      <Hero />
+
+      <FeaturedPizzas pizzas={pizzas} />
+      
+      <Promotions promotions={promotions} />
+    </>
+  );
+}
+
