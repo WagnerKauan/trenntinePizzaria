@@ -25,11 +25,11 @@ export function Steps() {
   ];
 
   return (
-    <section className="py-24">
+    <section className="py-16 lg:py-24">
   <div className="container mx-auto flex flex-col md:flex-row items-center justify-center 
     shadow-lg bg-light-normal rounded-[50px] p-6 md:p-24 gap-12">
     
-    {/* Texto */}
+    
     <article className="flex-1">
       <h3 className="font-bold text-dark-normal text-2xl md:text-3xl text-center md:text-left">
         Peça sua pizza em 3 passos
@@ -40,7 +40,7 @@ export function Steps() {
           key={step.id} 
           className="flex flex-col sm:flex-row items-center sm:items-start gap-4 mt-12"
         >
-          {/* Bolinha com número */}
+         
           <div
             className="bg-primary-normal w-[50px] h-[50px] md:w-[60px] md:h-[60px] rounded-full
             flex items-center justify-center text-white text-xl md:text-2xl shrink-0"
@@ -48,7 +48,7 @@ export function Steps() {
             {step.id}
           </div>
 
-          {/* Texto */}
+          
           <div className="max-w-lg space-y-2">
             <h5 className="font-semibold text-base sm:text-lg md:text-2xl text-center sm:text-left">
               {step.title}
@@ -61,8 +61,8 @@ export function Steps() {
       ))}
     </article>
 
-    {/* Imagem */}
-    <div className="hidden md:block md:relative w-full max-w-[588px] h-[588px] rounded-[50px] border-2 overflow-hidden flex-1">
+    
+    <div className="hidden lg:block md:relative w-full max-w-[588px] h-[588px] rounded-[50px] border-2 overflow-hidden flex-1">
       <Image
         src={"/image/bg_steps.png"}
         alt="Pizza"

@@ -17,7 +17,7 @@ export function FeaturedPizzas({ pizzas }: { pizzas: Pizza[] }) {
   const featuredPizzas = pizzas.filter((pizza) => pizza.isFeatured);
 
   return (
-    <section className="py-24">
+    <section className="py-16 lg:py-24">
       <div className="relative w-full h-[130px]">
         <Image
           src={"/image/bg_featuredPizza.png"}

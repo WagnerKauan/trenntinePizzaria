@@ -12,18 +12,21 @@ import {
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 
-export function Header() {
-  const sections = [
-    { href: "#home", label: "Home" },
-    { href: "#promocoes", label: "Promoções" },
-    { href: "#cardapio", label: "Cardápio" },
-    { href: "#localizacao", label: "Localização" },
-  ];
 
+export const sections = [
+  { href: "#", label: "Home" },
+  { href: "#promocoes", label: "Promoções" },
+  { href: "#cardapio", label: "Cardápio" },
+  { href: "#localizacao", label: "Localização" },
+];
+
+export function Header() {
   return (
     <div className="fixed top-0 left-0 right-0 z-[300] bg-white shadow-md">
-      <header className="flex items-center
-        justify-between px-4 py-6 container mx-auto">
+      <header
+        className="flex items-center
+        justify-between px-4 py-6 container mx-auto"
+      >
         <Sheet>
           <div className="w-[111px] h-[48px] relative">
             <Image
@@ -44,12 +47,16 @@ export function Header() {
               />
             ))}
           </nav>
-          <div className="flex items-center gap-7.5 flex-1 justify-end
-            md:justify-items-start mr-7.5 md:mr-0 md:flex-initial">
+          <div
+            className="flex items-center gap-7.5 flex-1 justify-end
+            md:justify-items-start mr-7.5 md:mr-0 md:flex-initial"
+          >
             <div className="relative">
               <ShoppingCart className="w-6 h-6" />
-              <span className="absolute -top-1 left-4 w-4 h-4 bg-primary-normal rounded-full flex
-                items-center justify-center text-[10px] text-white">
+              <span
+                className="absolute -top-1 left-4 w-4 h-4 bg-primary-normal rounded-full flex
+                items-center justify-center text-[10px] text-white"
+              >
                 3
               </span>
             </div>
@@ -103,13 +110,14 @@ export function Header() {
 interface SideBarLinkProps {
   href: string;
   label: string;
+  textColor?: string;
 }
 
-export function SideBarLink({ href, label }: SideBarLinkProps) {
+export function SideBarLink({ href, label, textColor }: SideBarLinkProps) {
   return (
     <a
       href={href}
-      className="text-dark-normal hover:text-primary-normal duration-200 font-bold"
+      className={`${textColor || "text-dark-normal"} hover:text-primary-normal duration-200 font-bold`}
     >
       {label}
     </a>

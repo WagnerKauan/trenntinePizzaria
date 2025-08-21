@@ -12,7 +12,7 @@ import { Promotion } from "@/utils/get-all-promotions";
 
 export function Promotions({ promotions }: { promotions: Promotion[] }) {
   return (
-    <section id="promocoes" className="py-24">
+    <section id="promocoes" className="py-16 lg:py-24">
       <div className="relative w-full h-[130px]">
         <Image
           src={"/image/bg_promotionsPizza.png"}
