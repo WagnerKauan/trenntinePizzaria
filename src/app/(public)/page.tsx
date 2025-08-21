@@ -1,10 +1,10 @@
 "use server";
 
 import { getAllPizzas } from "@/utils/get-all-pizzas";
-import { FeaturedPizzas } from "./_components/featuredPizzas";
+import { FeaturedPizzas } from "./_components/highlights/featuredPizzas";
 import { Header } from "./_components/header";
 import { Hero } from "./_components/hero";
-import { Promotions } from "./_components/promotins";
+import { Promotions } from "./_components/promotions/promotins";
 import { getAllPromotions } from "@/utils/get-all-promotions";
 import { Steps } from "./_components/steps";
 import { Contact } from "./_components/contact";
