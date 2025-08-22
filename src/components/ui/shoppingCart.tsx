@@ -56,7 +56,7 @@ export function ShoppingCart() {
 
       <DialogContent className="sm:max-w-[450px]">
         <DialogHeader>
-          <DialogTitle className="font-semibold text-lg">
+          <DialogTitle className="font-semibold text-lg lg:text-xl">
             Meu carrinho
           </DialogTitle>
           <DialogDescription>
@@ -86,8 +86,8 @@ export function ShoppingCart() {
         )}
 
         <div className="flex items-center justify-between">
-          <span className="font-bold text-dark-normal uppercase">total</span>
-          <span className="font-bold text-dark-normal">
+          <span className="font-bold text-dark-normal uppercase text-base lg:text-lg">total</span>
+          <span className="font-bold text-dark-normal text-base lg:text-lg">
             R$ {totalPrice.toFixed(2).toString().replace(".", ",")}
           </span>
         </div>

@@ -7,3 +7,7 @@ export const selectCartTotalQuantity = (state: RootState) =>
 
 export const selectCartTotalPrice = (state: RootState) =>
   state.cart.items.reduce((total, item) => total + item.price * item.quantity, 0);
+
+
+export const selectCartItemQuantity = (id: number) => (state: RootState) =>
+  state.cart.items.find((item) => item.id === id)?.quantity || 0;

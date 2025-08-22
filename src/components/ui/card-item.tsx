@@ -31,8 +31,8 @@ export function CardItem({ name, price, image, quantity, id,  incrementQuantity,
           />
         </div>
         <div className="flex flex-col">
-          <h3 className="text-sm font-semibold text-gray-800">{name}</h3>
-          <span className="text-xs text-primary-normal">R$ {price.toFixed(2).toString().replace(".", ",")}</span>
+          <h3 className="text-sm font-semibold text-gray-800 lg:text-base">{name}</h3>
+          <span className="text-xs text-primary-normal lg:text-base">R$ {price.toFixed(2).toString().replace(".", ",")}</span>
         </div>
       </div>
       <div className="flex items-center gap-2">
@@ -44,7 +44,7 @@ export function CardItem({ name, price, image, quantity, id,  incrementQuantity,
           <Minus className="w-3 h-3" />
         </button>
 
-        <span className="text-sm font-medium text-gray-800">{quantity}</span>
+        <span className="text-sm font-medium text-gray-800 lg:text-base">{quantity}</span>
         <button
           className="cursor-pointer w-6 h-6 flex items-center
             justify-center rounded-full bg-primary-normal text-white hover:bg-primary-dark transition"

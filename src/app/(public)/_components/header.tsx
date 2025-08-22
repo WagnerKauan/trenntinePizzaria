@@ -12,21 +12,34 @@ import {
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { ShoppingCart } from "@/components/ui/shoppingCart";
-
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export const sections = [
   { href: "#", label: "Home" },
   { href: "#promocoes", label: "Promoções" },
-  { href: "#cardapio", label: "Cardápio" },
+  { href: "/menu", label: "Cardápio" },
   { href: "#localizacao", label: "Localização" },
 ];
 
 export function Header() {
+  const pathname = usePathname();
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.location.hash) {
+      const id = window.location.hash.replace("#", "");
+      const el = document.getElementById(id);
+      if (el) el.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [pathname]);
+
   return (
     <div className="fixed top-0 left-0 right-0 z-10  bg-white shadow-md">
       <header
         className="flex items-center
         justify-between px-4 py-6 container mx-auto"
+        id="home"
       >
         <Sheet>
           <div className="w-[111px] h-[48px] relative">
@@ -58,10 +71,9 @@ export function Header() {
               className="hidden cursor-pointer md:flex bg-primary-normal
                hover:bg-primary-dark duration-300 px-8 py-5"
             >
-              Pedir agora
+              <Link className="w-full" href="/menu">Pedir agora</Link>
             </Button>
           </div>
-
 
           {/* sidebar Mobile */}
           <div className="md:hidden flex items-center gap-10">
@@ -110,12 +122,44 @@ interface SideBarLinkProps {
 }
 
 export function SideBarLink({ href, label, textColor }: SideBarLinkProps) {
-  return (
+  const router = useRouter();
+
+  const isHash = href.startsWith("#");
+
+  const handleClick = (e: React.MouseEvent) => {
+    if (isHash) {
+      e.preventDefault();
+      const id = href.replace("#", "");
+      const el = document.getElementById(id);
+
+      // Se estiver na mesma página, rola suavemente
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth" });
+      } else {
+        // Se estiver em outra página (ex: #promocoes na learnpage), navega primeiro
+        router.push("/" + href);
+      }
+    }
+  };
+
+  return isHash ? (
     <a
       href={href}
-      className={`${textColor || "text-dark-normal"} hover:text-primary-normal duration-200 font-bold`}
+      onClick={handleClick}
+      className={`${
+        textColor || "text-dark-normal"
+      } hover:text-primary-normal duration-200 font-bold`}
     >
       {label}
     </a>
+  ) : (
+    <Link
+      href={href}
+      className={`${
+        textColor || "text-dark-normal"
+      } hover:text-primary-normal duration-200 font-bold`}
+    >
+      {label}
+    </Link>
   );
 }

@@ -2,10 +2,11 @@
 
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import Link from "next/link";
 
 export function Hero() {
   return (
-    <section className="container mx-auto py-24 mt-22">
+    <section className="container mx-auto py-24 mt-22" id="home">
       <main className="flex items-center justify-between">
         <article className="space-y-8 px-3.5 lg:max-w-[450px] xl:max-w-none max-w-[550px] mx-auto lg:mx-0">
           <h1
@@ -26,7 +27,7 @@ export function Hero() {
               className="cursor-pointer md:flex bg-primary-normal
                hover:bg-primary-dark duration-300 px-14 text-[18px] py-6 rounded-full lg:w-full lg:max-w-2xs"
             >
-              Pedir agora
+              <Link className="w-full" href="/menu">Pedir agora</Link>
             </Button>
           </div>
         </article>
