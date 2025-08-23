@@ -1,6 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Pizza } from "@/types";
-import { RootState } from "../index";
 
 export interface CartItem extends Pizza {
   quantity: number;
@@ -44,10 +43,12 @@ const cartSlice = createSlice({
         state.items = state.items.filter((item) => item.id !== action.payload);
       }
     },
+
+    clearCart: () => initalState,
   },
 });
 
-export const { addPizza, incrementQuantity, decrementQuantity } =
+export const { addPizza, incrementQuantity, decrementQuantity, clearCart } =
   cartSlice.actions;
 
 export default cartSlice.reducer;

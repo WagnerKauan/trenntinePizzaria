@@ -1,6 +1,7 @@
 "use client";
 
-import { ShoppingCartIcon } from "lucide-react";
+import Link from 'next/link'
+import {  ShoppingCartIcon } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -95,8 +96,9 @@ export function ShoppingCart() {
         <Button
           className="w-full mt-4 bg-primary-normal hover:bg-primary-dark cursor-pointer"
           disabled={cartItems?.length === 0}
+          
         >
-          Finalizar compra
+          <Link href="/checkout">Finalizar compra</Link>
         </Button>
       </DialogContent>
     </Dialog>

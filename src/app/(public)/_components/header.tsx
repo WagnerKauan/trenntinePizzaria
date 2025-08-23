@@ -35,7 +35,7 @@ export function Header() {
   }, [pathname]);
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-10  bg-white shadow-md">
+    <div className={`fixed top-0 left-0 right-0 z-10  bg-white shadow-md ${pathname === "/checkout" && "opacity-95"}`}>
       <header
         className="flex items-center
         justify-between px-4 py-6 container mx-auto"
@@ -67,12 +67,21 @@ export function Header() {
           >
             <ShoppingCart />
 
-            <Button
+            {pathname === "/menu" ? (
+              <Button
+              className="hidden cursor-pointer md:flex bg-primary-normal
+               hover:bg-primary-dark duration-300 px-8 py-5"
+            >
+              <Link className="w-full" href="/checkout">Fechar pedido</Link>
+            </Button> 
+            ) : (
+              <Button
               className="hidden cursor-pointer md:flex bg-primary-normal
                hover:bg-primary-dark duration-300 px-8 py-5"
             >
               <Link className="w-full" href="/menu">Pedir agora</Link>
             </Button>
+            )}
           </div>
 
           {/* sidebar Mobile */}
