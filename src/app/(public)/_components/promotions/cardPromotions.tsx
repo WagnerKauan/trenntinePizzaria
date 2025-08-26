@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { Promotion } from "@/utils/get-all-promotions";
+import Link from "next/link";
 
 export function CardPromotions({ promotion }: { promotion: Promotion }) {
   return (
@@ -33,7 +34,7 @@ export function CardPromotions({ promotion }: { promotion: Promotion }) {
             className="bg-transparent border-2 border-secondary-normal hover:bg-secondary-normal 
               text-secondary-light cursor-pointer px-10 py-3 hover:text-white duration-300"
           >
-            Cardapío
+            <Link href="/menu">Cardapío</Link>
           </Button>
         </div>
       </div>

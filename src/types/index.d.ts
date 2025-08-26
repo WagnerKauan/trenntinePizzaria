@@ -33,3 +33,12 @@ export interface CheckoutData {
 }
 
 export type MethodPayment = "Pix" | "Cartão" | "Dinheiro";
+
+
+interface PromotionRule {
+  category?: string;
+  tag?: string;
+  minQuantity?: number;
+  discount?: number;
+  bonusProduct?: string;
+}
