@@ -32,7 +32,7 @@ export function SignInList() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
-        <div className="flex flex-col gap-4 p-6">
+        <div className="flex flex-col gap-4 p-8">
           <h1 className="text-2xl font-semibold text-white text-center">Adiministração</h1>
           <FormField
             control={form.control}
@@ -41,7 +41,7 @@ export function SignInList() {
               <FormItem>
                 <FormLabel className="text-white">Email</FormLabel>
                 <FormControl>
-                  <Input placeholder="seu@email.com" {...field} />
+                  <Input placeholder="seu@email.com" {...field} className="bg-white" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -54,7 +54,7 @@ export function SignInList() {
               <FormItem>
                 <FormLabel className="text-white">Senha</FormLabel>
                 <FormControl>
-                  <Input placeholder="******" {...field} />
+                  <Input type="password" placeholder="******" {...field} className="bg-white" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
