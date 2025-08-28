@@ -1,13 +1,21 @@
+"use server";
+
+import { getCurrentUser } from "@/utils/jwt/getCurrentUser"
+import { ProfileContent } from "./_components/profile-content";
+import { redirect } from "next/navigation";
 
 
+export default async function Profile() {
 
+  const user = await getCurrentUser();
 
-export default function Profile() {
-
+  if(!user) {
+    redirect("/signIn");
+  }
 
   return (
-    <div>
-      <h1>PÀGINA DE PERFIL</h1>
-    </div>
+    <>
+      <ProfileContent userId={user} />
+    </>
   )
 }
