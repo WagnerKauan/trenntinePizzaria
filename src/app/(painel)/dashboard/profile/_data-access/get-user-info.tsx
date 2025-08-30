@@ -3,6 +3,7 @@
 import prisma from "@/lib/prisma";
 
 export async function getUserInfo(userId: string) {
+  
   try {
     if (!userId) return null;
 

@@ -5,26 +5,23 @@ import Image from "next/image";
 
 
 type CartItemProps = {
-  id: number;
+  id: string;
   name: string;
   price: number;
-  image: string;
+  imageUrl: string | null;
   quantity: number;
-  incrementQuantity: (id: number) => void;
-  decrementQuantity: (id: number) => void;
+  incrementQuantity: (id: string) => void;
+  decrementQuantity: (id: string) => void;
 };
 
-export function CardItem({ name, price, image, quantity, id,  incrementQuantity, decrementQuantity }: CartItemProps) {
-
-
-
+export function CardItem({ name, price, imageUrl, quantity, id,  incrementQuantity, decrementQuantity }: CartItemProps) {
 
   return (
     <div className="w-full shadow-md border border-gray-200 rounded-xl p-4 flex items-center justify-between bg-white">
       <div className="flex items-center gap-3">
         <div className="relative rounded-full overflow-hidden w-[50px] h-[50px]">
           <Image
-            src={image}
+            src={imageUrl || "/images/pizza-calabresa.png"}
             alt="Pizza Marguerita"
             fill
             className="rounded-full object-cover"

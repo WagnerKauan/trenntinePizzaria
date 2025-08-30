@@ -27,13 +27,12 @@ export function ShoppingCart() {
   const totalPrice = useSelector(selectCartTotalPrice);
   const dispatch = useDispatch();
 
-  console.log(totalQuantity);
 
-  function handleIncrementQuantity(id: number) {
+  function handleIncrementQuantity(id: string) {
     dispatch(incrementQuantity(id));
   }
 
-  function handleDecrementQuantity(id: number) {
+  function handleDecrementQuantity(id: string) {
     dispatch(decrementQuantity(id));
   }
 
@@ -70,14 +69,14 @@ export function ShoppingCart() {
         {cartItems.length > 0 && (
           <ScrollArea className="p-4 h-[300px] ">
             <div className="flex flex-col gap-4">
-              {cartItems?.map((pizza, index) => (
+              {cartItems?.map((product, index) => (
                 <CardItem
                   key={index}
-                  image={pizza.image}
-                  name={pizza.name}
-                  price={pizza.price}
-                  quantity={pizza.quantity}
-                  id={pizza.id}
+                  imageUrl={product.imageUrl}
+                  name={product.name}
+                  price={product.price}
+                  quantity={product.quantity}
+                  id={product.id}
                   incrementQuantity={handleIncrementQuantity}
                   decrementQuantity={handleDecrementQuantity}
                 />

@@ -7,7 +7,6 @@ import { ProfileList } from "./profile-list";
 
 
 export async function ProfileContent({ userId }: { userId: string }) {
-
   const user = await getUserInfo(userId);
 
   if(!user) {

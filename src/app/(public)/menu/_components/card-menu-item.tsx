@@ -1,37 +1,38 @@
 "use client";
 
+import { Product } from "@/generated/prisma";
 import { selectCartItemQuantity } from "@/store/cart/cartSelectors";
 import { Pizza } from "@/types";
 import Image from "next/image";
 import { useSelector } from "react-redux";
 
 interface CardMenuItemProps {
-  pizza: Pizza;
-  addToCard: (pizza: Pizza) => void;
+  product: Product;
+  addToCard: (pizza: Product) => void;
 }
 
-export function CardMenuItem({ pizza, addToCard }: CardMenuItemProps) {
-  const quantity = useSelector(selectCartItemQuantity(pizza.id));
+export function CardMenuItem({ product, addToCard }: CardMenuItemProps) {
+  const quantity = useSelector(selectCartItemQuantity(product.id));
 
   return (
     <button
       className="flex items-center justify-between relative shadow-md border text-left border-gray-200 
     hover:border-primary-normal rounded-xl px-4 py-3 hover:shadow-lg hover:scale-[1.02] cursor-pointer duration-300"
-      onClick={() => addToCard(pizza)}
+      onClick={() => addToCard(product)}
     >
       <div className="flex flex-col gap-2 max-w-[250px]">
-        <h3 className="text-base font-bold text-dark-800">{pizza.name}</h3>
+        <h3 className="text-base font-bold text-dark-800">{product.name}</h3>
 
         <p className="text-sm text-dark-800 line-clamp-2">
-          {pizza.ingredients}
+          {product.description}
         </p>
         <span className="text-primary-normal font-bold text-lg">
-          R$ {pizza.price.toFixed(2).toString().replace(".", ",")}
+          R$ {product.price.toFixed(2).toString().replace(".", ",")}
         </span>
       </div>
       <div className="relative rounded-xl overflow-hidden w-[120px] h-[90px]">
         <Image
-          src={pizza.image}
+          src={product.imageUrl || "/images/pizza-calabresa.png"}
           alt="Pizza Calabresa"
           fill
           className="object-cover"

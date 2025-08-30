@@ -1,36 +1,36 @@
 "use client";
 
-import { Pizza } from "@/types";
 import { Search } from "lucide-react";
 import { CardMenuItem } from "./card-menu-item";
 import { useDispatch } from "react-redux";
-import { addPizza } from "@/store/cart/cartSlice";
+import { addProduct } from "@/store/cart/cartSlice";
 import { useEffect, useState } from "react";
+import { Product } from "@/generated/prisma";
 
 interface AreaMenuProps {
-  pizzas: Pizza[];
+  products: Product[];
 }
 
-export function AreaMenu({ pizzas }: AreaMenuProps) {
+export function AreaMenu({ products }: AreaMenuProps) {
   const [searchPizza, setSearchPizza] = useState("");
-  const [pizzasFiltered, setPizzasFiltered] = useState(pizzas || []);
+  const [productsFiltered, setProductsFiltered] = useState(products || []);
 
   const dispatch = useDispatch();
 
-  function handleAddToCart(pizza: Pizza) {
-    dispatch(addPizza(pizza));
+  function handleAddToCart(pizza: Product) {
+    dispatch(addProduct(pizza));
   }
 
   useEffect(() => {
     if (searchPizza) {
-      const pizzasFiltered = pizzas.filter((pizza) =>
-        pizza.name.toLowerCase().includes(searchPizza.toLowerCase())
+      const pizzasFiltered = products.filter((products) =>
+        products.name.toLowerCase().includes(searchPizza.toLowerCase())
       );
-      setPizzasFiltered(pizzasFiltered);
+      setProductsFiltered(pizzasFiltered);
     } else {
-      setPizzasFiltered(pizzas);
+      setProductsFiltered(products);
     }
-  }, [searchPizza, pizzas]);
+  }, [searchPizza, products]);
 
   return (
     <section className="mt-40 px-2 xl:px-0">
@@ -54,18 +54,18 @@ export function AreaMenu({ pizzas }: AreaMenuProps) {
       </div>
 
       <div className="container mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 mt-12">
-        {pizzasFiltered.length > 0 ? (
-          pizzasFiltered.map((pizza, index) => (
+        {productsFiltered.length > 0 ? (
+          productsFiltered.map((product, index) => (
             <CardMenuItem
               key={index}
-              pizza={pizza}
+              product={product}
               addToCard={handleAddToCart}
             />
           ))
         ) : (
           <div>
             <p className="text-center text-gray-400">
-              Nenhuma pizza encontrada
+              Nenhum produto encontrado
             </p>
           </div>
         )}

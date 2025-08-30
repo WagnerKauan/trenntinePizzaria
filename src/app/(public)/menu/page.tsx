@@ -1,18 +1,18 @@
 "use server";
 
-import { getAllPizzas } from "@/utils/get-all-pizzas";
 import { Header } from "../_components/header";
 import { AreaMenu } from "./_components/area-menu";
+import { getAllProducts } from "../_data-access/get-all-products";
 
 export default async function Menu() {
 
-   const pizzas = await getAllPizzas();
+   const products = await getAllProducts();
 
   return (
     <>
       <Header />
 
-      <AreaMenu pizzas={pizzas} />
+      <AreaMenu products={products} />
     </>
   );
 }

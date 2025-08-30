@@ -11,17 +11,17 @@ import {
 } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { Pizza } from "@/types";
+import { Product } from "@/generated/prisma";
 import { useDispatch } from "react-redux";
-import { addPizza } from "@/store/cart/cartSlice";
+import { addProduct } from "@/store/cart/cartSlice";
 
-export function FeaturedPizzas({ pizzas }: { pizzas: Pizza[] }) {
-  const featuredPizzas = pizzas.filter((pizza) => pizza.isFeatured);
+export function FeaturedPizzas({ products }: { products: Product[] }) {
+  const featuredProducts = products.filter((product) => product.isFeatured);
 
   const dispatch = useDispatch();
 
-  function handleAddToCart(pizza: Pizza) {
-    dispatch(addPizza(pizza));
+  function handleAddToCart(product: Product) {
+    dispatch(addProduct(product));
   }
 
   return (
@@ -55,13 +55,13 @@ export function FeaturedPizzas({ pizzas }: { pizzas: Pizza[] }) {
           className="w-full"
         >
           <CarouselContent className="space-y-6">
-            {featuredPizzas.map((pizza) => (
+            {featuredProducts.map((product) => (
               <CarouselItem
                 className="md:basis-1/2 lg:basis-1/3 pl-18 md:pl-11"
-                key={pizza.id}
+                key={product.id}
               >
                 <CardPizza
-                  pizza={pizza}
+                  product={product}
                   addToCard={handleAddToCart}
                 />
               </CarouselItem>

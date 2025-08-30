@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Pizza } from "@/types";
+import { Product } from "@/generated/prisma";
 
-export interface CartItem extends Pizza {
+export interface CartItem extends Product {
   quantity: number;
 }
 
@@ -17,28 +17,28 @@ const cartSlice = createSlice({
   name: "cart",
   initialState: initalState,
   reducers: {
-    addPizza: (state, action: PayloadAction<Pizza>) => {
-      const pizza = state.items.find((item) => item.id === action.payload.id);
+    addProduct: (state, action: PayloadAction<Product>) => {
+      const product = state.items.find((item) => item.id === action.payload.id);
 
-      if (pizza) {
-        pizza.quantity += 1;
+      if (product) {
+        product.quantity += 1;
       } else {
         state.items.push({ ...action.payload, quantity: 1 });
       }
     },
 
-    incrementQuantity: (state, action: PayloadAction<number>) => {
-      const pizza = state.items.find((item) => item.id === action.payload);
-      if (pizza) {
-        pizza.quantity += 1;
+    incrementQuantity: (state, action: PayloadAction<string>) => {
+      const product = state.items.find((item) => item.id === action.payload);
+      if (product) {
+        product.quantity += 1;
       }
     },
 
-    decrementQuantity: (state, action: PayloadAction<number>) => {
-      const pizza = state.items.find((item) => item.id === action.payload);
+    decrementQuantity: (state, action: PayloadAction<string>) => {
+      const product = state.items.find((item) => item.id === action.payload);
 
-      if (pizza && pizza.quantity > 1) {
-        pizza.quantity -= 1;
+      if (product && product.quantity > 1) {
+        product.quantity -= 1;
       } else {
         state.items = state.items.filter((item) => item.id !== action.payload);
       }
@@ -48,7 +48,7 @@ const cartSlice = createSlice({
   },
 });
 
-export const { addPizza, incrementQuantity, decrementQuantity, clearCart } =
+export const { addProduct, incrementQuantity, decrementQuantity, clearCart } =
   cartSlice.actions;
 
 export default cartSlice.reducer;

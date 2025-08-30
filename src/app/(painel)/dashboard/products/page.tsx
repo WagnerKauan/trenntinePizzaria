@@ -1,10 +1,11 @@
 "use server";
 
 import { getCurrentUser } from "@/utils/jwt/getCurrentUser";
+import { ProductContent } from "./_components/product-content";
 import { redirect } from "next/navigation";
-import { OrdersContent } from "./_components/orders-content";
 
-export default async function Dashboard() {
+
+export default async function Products() {
 
   const user = await getCurrentUser();
 
@@ -12,9 +13,9 @@ export default async function Dashboard() {
     redirect("/signIn");
   }
 
-  return (
+  return(
     <>
-      <OrdersContent />
+      <ProductContent />
     </>
   )
 }

@@ -32,6 +32,7 @@ import { Button } from "@/components/ui/button";
 import { updateProfile } from "../_actions/update-profile";
 import { toast } from "sonner";
 import { PasswordInput } from "./input-password";
+import { useEffect } from "react";
 
 type User = Prisma.UserGetPayload<{
   select: {
@@ -50,6 +51,13 @@ export function ProfileList({ user }: ProfileListProps) {
     name: user.name,
     email: user.email,
   });
+
+  useEffect(() => {
+  form.reset({
+    name: user.name!,
+    email: user.email,
+  });
+}, [user]);
 
   async function onSubmit(values: ProfileFormData) {
     const response = await updateProfile(values);
