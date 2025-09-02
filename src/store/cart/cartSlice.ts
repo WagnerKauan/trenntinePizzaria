@@ -5,12 +5,19 @@ export interface CartItem extends Product {
   quantity: number;
 }
 
+type ActivePromotion = {
+  id: string;
+  name: string;
+};
+
 interface CardState {
   items: CartItem[];
+  activePromotion: ActivePromotion | null;
 }
 
 const initalState: CardState = {
   items: [],
+  activePromotion: null,
 };
 
 const cartSlice = createSlice({
@@ -45,10 +52,14 @@ const cartSlice = createSlice({
     },
 
     clearCart: () => initalState,
+
+    setActivePromotion: (state, action: PayloadAction<ActivePromotion>) => {
+      state.activePromotion = action.payload;
+    },
   },
 });
 
-export const { addProduct, incrementQuantity, decrementQuantity, clearCart } =
+export const { addProduct, incrementQuantity, decrementQuantity, clearCart, setActivePromotion } =
   cartSlice.actions;
 
 export default cartSlice.reducer;

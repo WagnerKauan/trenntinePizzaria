@@ -1,14 +1,19 @@
 "use client";
 
-import { Product } from "@/generated/prisma";
+import { Promotion } from "@/generated/prisma";
 import { Loader, Upload } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import { toast } from "sonner";
-import { uploadProductImage } from "../_actions/upload-product-image";
+import { uploadPromotionImage } from "../_actions/upload-promotion-image";
 
-export function ProductAvatar({ product }: { product: Product }) {
+interface PromotionAvatarProps {
+  promotion: Promotion;
+}
+
+export function PromotionAvatar({ promotion }: PromotionAvatarProps) {
   const [loading, setLoading] = useState(false);
+
 
   async function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
     if(event.target.files && event.target.files[0]) {
@@ -22,7 +27,7 @@ export function ProductAvatar({ product }: { product: Product }) {
         return;
       }
 
-      const newFileName = `${product.id}`
+      const newFileName = `${promotion.id}`
       const newFile = new File([image], newFileName, {  type: image.type });
       const urlImage = await uploadImage(newFile);
 
@@ -32,7 +37,7 @@ export function ProductAvatar({ product }: { product: Product }) {
         return;
       }
 
-      const response = await uploadProductImage({productImageUrl: urlImage, productId: product.id});
+      const response = await uploadPromotionImage({promotionImageUrl: urlImage, promotionId: promotion.id});
 
       if(response.error) {
         toast.error(response.error);
@@ -53,7 +58,7 @@ export function ProductAvatar({ product }: { product: Product }) {
       const formData = new FormData();
 
       formData.append("file", image);
-      formData.append("id", product.id);
+      formData.append("id", promotion.id);
 
       const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/image/upload`, {
         method: "POST",
@@ -74,10 +79,10 @@ export function ProductAvatar({ product }: { product: Product }) {
     }
   }
 
-  
+
   return (
-      <div className="relative h-[50px] w-[50px] rounded-full overflow-hidden">
-        <div className="relative flex items-center justify-center w-full h-full">
+    <div className="relative h-[50px] w-[50px] rounded-full overflow-hidden">
+      <div className="relative flex items-center justify-center w-full h-full">
         <span className="absolute cursor-pointer z-[2] bg-slate-50/60 p-2 rounded-full shadow-xl">
           {loading ? (
             <Loader size={16} color="#131313" className="animate-spin" />
@@ -92,17 +97,16 @@ export function ProductAvatar({ product }: { product: Product }) {
           onChange={handleChange}
         />
       </div>
-        <Image
-          src={
-            product.category === "pizza"
-              ? product.imageUrl || "/image/pizzas/quatroQueijos.png"
-              : product.imageUrl || "/image/defaultDrink.jpg"
-          }
-          alt={product.name}
-          fill
-          quality={100}
-          className="object-cover"
-        />
-      </div>
+
+      <Image
+        src={
+          promotion.imageUrl || "/image/promotions/promotions_1.png"
+        }
+        alt={promotion.name}
+        fill
+        quality={100}
+        className="object-cover"
+      />
+    </div>
   );
 }

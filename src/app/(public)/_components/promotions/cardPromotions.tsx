@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import { Promotion } from "@/utils/get-all-promotions";
+import { Promotion } from "@/generated/prisma";
 import Link from "next/link";
 
 export function CardPromotions({ promotion }: { promotion: Promotion }) {
@@ -10,15 +10,15 @@ export function CardPromotions({ promotion }: { promotion: Promotion }) {
     <div>
       <div
         className="relative w-[300px] h-[300px] lg:w-full lg:aspect-square rounded-xl shadow-lg 
-            overflow-hidden group hover:scale-105 hover:shadow-xl transition-all duration-500"
+            overflow-hidden group hover:scale-105 hover:shadow-xl transition-all duration-500 "
       >
         <Image
-          src={promotion.image}
+          src={promotion.imageUrl || "/image/pizzaCalabresa.png"}
           fill
           alt={promotion.name}
           className="w-full object-cover"
         />
-        <div className="absolute top-0 left-0 w-full h-full flex flex-col items-start justify-between p-6">
+        <div className="absolute top-0 left-0 w-full h-full flex flex-col items-start justify-between p-6 bg-black/70">
           <div className="flex flex-col gap-4">
             <h5 className="text-secondary-normal font-extrabold text-xl drop-shadow-md">
               {promotion.name}
@@ -27,7 +27,7 @@ export function CardPromotions({ promotion }: { promotion: Promotion }) {
               {promotion.description}
             </span>
             <span className="text-white px-3 py-1 bg-secondary-normal rounded-lg font-bold text-base w-fit shadow">
-              R$ {promotion.price}
+              {promotion.type === "PERCENT" ? "Desconto" : "Combo"}
             </span>
           </div>
           <Button

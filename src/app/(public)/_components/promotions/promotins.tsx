@@ -8,9 +8,20 @@ import {
 } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
 import { CardPromotions } from "./cardPromotions";
-import { Promotion } from "@/utils/get-all-promotions";
+import { Promotion } from "@/generated/prisma";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { setPromotions } from "@/store/promotions/promotionsSlice";
 
 export function Promotions({ promotions }: { promotions: Promotion[] }) {
+
+  const dispatch = useDispatch();
+
+
+  useEffect(() => {
+    dispatch(setPromotions(promotions));  
+  }, [promotions]);
+
   return (
     <section id="promocoes" className="py-16 lg:py-24">
       <div className="relative w-full h-[130px]">

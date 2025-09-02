@@ -38,7 +38,7 @@ export function ProductsList({ products }: ProductListProps) {
   const [search, setSearch] = useState("");
 
   useEffect(() => {
-    setProductsFiltered(products || []);  
+    setProductsFiltered(products.sort((a, b) => a.name.localeCompare(b.name)) || []);  
   }, [products]);
 
   function handleEditProduct(product: Product) {
@@ -183,6 +183,14 @@ export function ProductsList({ products }: ProductListProps) {
 
             <ScrollArea className="h-[630px] rounded-xl border border-stone-300 mt-5 overflow-hidden">
               <ul className=" rounded-xl border border-stone-300 divide-y divide-stone-300 overflow-hidden">
+                {productsFiltered.length === 0 && (
+                  <div className="flex items-center justify-center h-full">
+                    <span className="text-sm text-stone-500">
+                      Nenhum produto encontrado
+                    </span>
+                  </div>
+                )}
+                
                 {productsFiltered.map((product) => (
                   <li
                     key={product.id}

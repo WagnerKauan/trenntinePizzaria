@@ -1,71 +1,111 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Order, Product } from "@/generated/prisma";
+import { formatCurrency } from "@/utils/formatCurrency";
 import { Pencil } from "lucide-react";
+import { DialogOrder } from "./dialog-order";
+import { ScrollArea } from "@radix-ui/react-scroll-area";
 
-export function CardOrder() {
+interface CartItemProps {
+  order: Order;
+  handleUpdateStatus: (id: string, status: string) => void
+}
+
+export function CardOrder({ order, handleUpdateStatus }: CartItemProps) {
+  const items: Product[] = Array.isArray(order.items)
+    ? (order.items as unknown as Product[])
+    : [];
+
+  const date = new Date(order.createdAt).toLocaleString("pt-BR", {
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
+   const statusOrder: Record<string, string> = {
+    "PENDING": "text-yellow-500",
+    "PREPARATION": "text-blue-500",
+    "CONCLUDED": "text-green-500",
+    "CANCELED": "text-red-500",
+  }
+
   return (
-    <article className="w-full max-w-[340px] rounded-2xl shadow-lg border 
-        border-gray-200 bg-white p-5 space-y-4 transition hover:shadow-xl">
-      {/* Header com ID e status */}
+    <article
+      className="rounded-2xl shadow-lg border
+          border-gray-200 bg-white p-5 space-y-4 transition hover:shadow-xl"
+    >
       <div className="flex items-center justify-between">
-        <span className="font-bold text-lg text-gray-800">Pedido #123</span>
-        <Select defaultValue="waiting">
-          <SelectTrigger className="w-[140px] h-9 text-sm rounded-lg border-gray-300">
+        <span className="font-bold text-base xl:text-lg text-gray-800">
+          {date}
+        </span>
+        <Select defaultValue={order.status} onValueChange={(value) => handleUpdateStatus(order.id, value)}>
+          <SelectTrigger className={`w-[140px] h-9 text-sm rounded-lg border-gray-300 ${statusOrder[order.status]}`}>
             <SelectValue placeholder="Status" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="waiting">Aguardando</SelectItem>
-            <SelectItem value="preparing">Em preparo</SelectItem>
-            <SelectItem value="on-the-way">A caminho</SelectItem>
-            <SelectItem value="delivered">Finalizado</SelectItem>
-            <SelectItem value="canceled">Cancelado</SelectItem>
+            <SelectItem value="PENDING">Aguardando</SelectItem>
+            <SelectItem value="PREPARATION">Em preparo</SelectItem>
+            <SelectItem value="CONCLUDED">Finalizado</SelectItem>
+            <SelectItem value="CANCELED">Cancelado</SelectItem>
           </SelectContent>
         </Select>
       </div>
-
-      {/* Cliente */}
       <div className="space-y-1">
-        <h4 className="font-semibold text-gray-700">João da Silva</h4>
+        <h4 className="font-semibold text-gray-700">{order.name}</h4>
         <div className="flex items-center justify-between">
           <div className="flex flex-col text-sm text-gray-500">
-            <span>Rua Centro, 123</span>
-            <span>(11) 99999-9999</span>
+            <span>{order.street}</span>
+            <span>{order.phone}</span>
           </div>
-          <Button
-            size={"icon"}
-            variant={"outline"}
-            className="cursor-pointer border-none"
-          >
-            <Pencil className="w-4 h-4" />
-          </Button>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button
+                size={"icon"}
+                variant={"outline"}
+                className="cursor-pointer border-none"
+              >
+                <Pencil className="w-4 h-4" />
+              </Button>
+            </DialogTrigger>
+
+            <DialogOrder order={order} />
+          </Dialog>
         </div>
       </div>
-
       <hr className="border-gray-200" />
-
-      {/* Itens */}
       <div className="space-y-2">
-        <h4 className="font-semibold text-gray-700">Itens</h4>
-        <ul className="space-y-2 pl-4 list-disc text-sm text-gray-600">
-          <li className="flex items-center justify-between">
-            <span>1x Pizza de Calabresa</span>
-            <span className="font-medium text-gray-800">R$ 45,00</span>
-          </li>
-          <li className="flex items-center justify-between">
-            <span>1x Pizza de Frango</span>
-            <span className="font-medium text-gray-800">R$ 42,00</span>
-          </li>
-        </ul>
+        <h4 className="font-semibold text-gray-700">Itens ({items.length})</h4>
+        <ScrollArea className="h-[50px] overflow-auto px-2">
+          <ul className="space-y-2 pl-4 list-disc text-sm text-gray-600">
+            {items?.map((item) => (
+              <li key={item.id} className="flex items-center justify-between">
+                <span>
+                  {item.quantity}x {item.name}
+                </span>
+                <span className="font-medium text-gray-800">
+                  {formatCurrency(item.price)}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </ScrollArea>
       </div>
-
       <hr className="border-gray-200" />
-
-      {/* Total */}
       <div className="flex items-center justify-between">
         <h4 className="font-bold text-gray-800">Total</h4>
-        <span className="text-lg font-bold text-green-600">R$ 87,00</span>
+        <span className="text-lg font-bold text-green-600">
+          {formatCurrency(order.total)}
+        </span>
       </div>
     </article>
   );

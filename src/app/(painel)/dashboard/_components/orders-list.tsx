@@ -11,8 +11,73 @@ import {
 } from "@/components/ui/select";
 import { Search } from "lucide-react";
 import { CardOrder } from "./card-order";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { Order } from "@/generated/prisma";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { useState } from "react";
+import { updateStatusOrder } from "../_actions/update-status-order";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export function OrdersList() {
+  const [search, setSearch] = useState("");
+  const [ordersFiltered, setOrdersFiltered] = useState<Order[]>([]);
+  const router = useRouter();
+  const queryClient = useQueryClient();
+
+  const { data, isLoading, refetch } = useQuery({
+    queryKey: ["get-orders"],
+
+    queryFn: async () => {
+      const url = `${process.env.NEXT_PUBLIC_URL}/api/trentinne/orders`;
+      const response = await fetch(url);
+      const json = (await response.json()) as Order[];
+
+      if (!response.ok) {
+        return [];
+      }
+
+      setOrdersFiltered(json);
+      return json;
+    },
+    staleTime: 20000,
+    refetchInterval: 60000,
+  });
+
+  function handleSearch(value: string) {
+    setSearch(value);
+    const filteredOrders = data?.filter((order) => {
+      return order.name.toLowerCase().includes(value.toLowerCase());
+    });
+    setOrdersFiltered(filteredOrders || []);
+  }
+
+  function selectOrderStatus(value: string) {
+    if (value === "ALL") {
+      setOrdersFiltered(data || []);
+    } else {
+      const filteredOrders = data?.filter((order) => order.status === value);
+      setOrdersFiltered(filteredOrders || []);
+    }
+  }
+
+
+  async function handleUpdateStatus(id: string, status: string) {
+    
+    const response = await updateStatusOrder({id, status});
+    
+    if(response.error) {
+      toast.error(response.error);
+      return;
+    }
+
+    router.refresh();
+    queryClient.invalidateQueries({ queryKey: ["get-orders"] });
+    await refetch();
+    toast.success(response.message);
+  }
+
+
   return (
     <section className="mx-auto">
       <Card>
@@ -31,29 +96,38 @@ export function OrdersList() {
               />
               <Input
                 type="search"
-                placeholder="Pesquisar produto..."
+                placeholder="Pesquisar pedidos..."
                 className="pl-10 w-full flex-1 focus-visible:ring-2 focus-visible:ring-primary 
                     focus-visible:ring-offset-1 focus-visible:border-transparent"
+                onChange={(e) => handleSearch(e.target.value)}
+                value={search}
               />
             </div>
-            <Select defaultValue="all">
+            <Select defaultValue="ALL" onValueChange={selectOrderStatus}>
               <SelectTrigger className="w-full max-w-[150px] xl:max-w-xs">
                 <SelectValue placeholder="Filtrar por" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Todos</SelectItem>
-                <SelectItem value="waiting">Aguardando</SelectItem>
-                <SelectItem value="preparing">Em preparo</SelectItem>
-                <SelectItem value="on-the-way">A caminho</SelectItem>
-                <SelectItem value="delivered">Finalizado</SelectItem>
-                <SelectItem value="canceled">Cancelado</SelectItem>
+                <SelectItem value="ALL">Todos</SelectItem>
+                <SelectItem value="PENDING">Aguardando</SelectItem>
+                <SelectItem value="PREPARATION">Em preparo</SelectItem>
+                <SelectItem value="CONCLUDED">Finalizado</SelectItem>
+                <SelectItem value="CANCELED">Cancelado</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
-          <section className="mt-10">
-            <CardOrder />
-          </section>
+          <ScrollArea className="h-[650px] px-4  mt-10">
+            <section className=" grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
+              {isLoading && <p>Carregando...</p>}
+              {!isLoading && !ordersFiltered?.length && (
+                <p>Nenhum pedido encontrado</p>
+              )}
+              {ordersFiltered?.map((order) => (
+                <CardOrder key={order.id} order={order} handleUpdateStatus={handleUpdateStatus} />
+              ))}
+            </section>
+          </ScrollArea>
         </CardContent>
       </Card>
     </section>

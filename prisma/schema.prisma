@@ -59,6 +59,7 @@ model Product {
   isFeatured  Boolean  @default(false)
   active      Boolean  @default(true)
   createdAt   DateTime @default(now())
+  quantity    Int?
 }
 
 model Promotion {

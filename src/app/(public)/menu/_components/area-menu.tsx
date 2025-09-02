@@ -53,7 +53,7 @@ export function AreaMenu({ products }: AreaMenuProps) {
         </div>
       </div>
 
-      <div className="container mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 mt-12">
+      <div className="container mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 py-12">
         {productsFiltered.length > 0 ? (
           productsFiltered.map((product, index) => (
             <CardMenuItem

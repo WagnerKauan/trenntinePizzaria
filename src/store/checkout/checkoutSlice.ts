@@ -2,7 +2,6 @@ import { CheckoutData } from "@/types";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 
-
 interface CheckoutState {
   data: CheckoutData | null;
 }

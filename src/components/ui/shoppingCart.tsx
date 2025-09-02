@@ -20,12 +20,23 @@ import {
   selectCartTotalPrice,
   selectCartTotalQuantity,
 } from "@/store/cart/cartSelectors";
+import { selectPromotions } from '@/store/promotions/promotionsSeletors';
+import { ParsedPromo, parsePromotions } from '@/utils/perse-promotion';
+import { use, useEffect, useState } from 'react';
 
 export function ShoppingCart() {
   const cartItems = useSelector(selectCartItems);
   const totalQuantity = useSelector(selectCartTotalQuantity);
   const totalPrice = useSelector(selectCartTotalPrice);
+  const promotions = useSelector(selectPromotions)
+  const [parsedPromotions, setParsedPromotions] = useState<ParsedPromo[]>([]);
   const dispatch = useDispatch();
+
+
+  useEffect(() => {
+    const parsedPromotions = parsePromotions(promotions);
+    setParsedPromotions(parsedPromotions);
+  }, [promotions]); 
 
 
   function handleIncrementQuantity(id: string) {
@@ -34,6 +45,10 @@ export function ShoppingCart() {
 
   function handleDecrementQuantity(id: string) {
     dispatch(decrementQuantity(id));
+  }
+
+  function checkActivepromotions() {
+    
   }
 
   return (

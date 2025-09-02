@@ -20,6 +20,10 @@ import { formatWhatsappMessage } from "@/utils/formatWhatsappMessage";
 import { selectCheckoutData } from "@/store/checkout/checkoutSelectors";
 import { setData } from "@/store/checkout/checkoutSlice";
 import { clearCart } from "@/store/cart/cartSlice";
+import { Dialog, DialogContent,  } from "@/components/ui/dialog";
+import { DialogCheckout } from "./dialog-checkout";
+import { createOrder } from "../_actions/create-order";
+import { toast } from "sonner";
 
 const steps = [
   "Dados pessoais",
@@ -34,6 +38,7 @@ export function CheckoutList() {
   const totalPrice = useSelector(selectCartTotalPrice);
   const checkoutData = useSelector(selectCheckoutData);
   const [currentStep, setCurrentStep] = useState(0);
+  const [dialogOpen, setDialogOpen] = useState(false);
   const dispatch = useDispatch();
 
   const form = useCheckoutForm(checkoutData!);
@@ -53,25 +58,44 @@ export function CheckoutList() {
     setCurrentStep(currentStep + 1);
   }
 
-  function SendOrderWhatsapp(data: CheckoutFormData) {
+  async function handleNewOrder(data: CheckoutFormData) {
     dispatch(setData(data));
-    const message = formatWhatsappMessage(data, cartItems, totalPrice);
-    const phone = "5511981052276";
-    const url = `https://wa.me/${phone}?text=${message}`;
-    dispatch(clearCart())
-    window.open(url, "_blank");
+
+    const response = await createOrder({
+      name: data.name,
+      phone: data.phone,
+      email: data.email,
+      cep: data.cep,
+      street: data.street,
+      number: data.number,
+      complement: data.complement,
+      neighborhood: data.neighborhood,
+      referencePoint: data.referencePoint,
+      methodPayment: data.methodPayment,
+      changeFor: data.changeFor,
+      notes: data.notes,
+      items: cartItems,
+    })
+    
+    if(!response) {
+      toast.error("Erro ao realizar o pedido!");
+      return;
+    }
+    
+    setDialogOpen(true);
   }
 
   return (
-    <div>
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(SendOrderWhatsapp)}>
-          <div className="flex items-center justify-center w-full">
-            {steps.map((step, index) => (
-              <div key={index} className="flex-1 flex items-center w-full ">
-                {/* Bolinha */}
-                <div
-                  className={`relative flex items-center justify-center h-10 w-10 rounded-full border-2 transition-all duration-300
+    <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+      <div>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(handleNewOrder)}>
+            <div className="flex items-center justify-center w-full">
+              {steps.map((step, index) => (
+                <div key={index} className="flex-1 flex items-center w-full ">
+                  {/* Bolinha */}
+                  <div
+                    className={`relative flex items-center justify-center h-10 w-10 rounded-full border-2 transition-all duration-300
                   ${
                     index < currentStep
                       ? "border-primary bg-primary text-white"
@@ -80,72 +104,79 @@ export function CheckoutList() {
                       : "border-gray-300 bg-white text-gray-400"
                   }
                 `}
-                >
-                  {index < currentStep ? <Check size={18} /> : index + 1}
+                  >
+                    {index < currentStep ? <Check size={18} /> : index + 1}
+                  </div>
+
+                  {/* Linha de conexão */}
+                  {index < steps.length - 1 && (
+                    <div
+                      className={`flex-1 h-1 transition-all w-full duration-300 ${
+                        index < currentStep ? "bg-primary" : "bg-gray-300"
+                      }`}
+                    ></div>
+                  )}
                 </div>
+              ))}
+            </div>
 
-                {/* Linha de conexão */}
-                {index < steps.length - 1 && (
-                  <div
-                    className={`flex-1 h-1 transition-all w-full duration-300 ${
-                      index < currentStep ? "bg-primary" : "bg-gray-300"
-                    }`}
-                  ></div>
-                )}
-              </div>
-            ))}
-          </div>
+            <div className="mt-6">
+              <h2 className="text-lg font-semibold">{steps[currentStep]}</h2>
+              <span className="text-sm text-gray-500">
+                {steps[currentStep] === "Finalizar" &&
+                  "Confirme todos os dados abaixo"}
+              </span>
+            </div>
 
-          <div className="mt-6">
-            <h2 className="text-lg font-semibold">{steps[currentStep]}</h2>
-            <span className="text-sm text-gray-500">
-              {steps[currentStep] === "Finalizar" &&
-                "Confirme todos os dados abaixo"}
-            </span>
-          </div>
+            <div className="mt-6">
+              {currentStep === 0 && <StepDadosPessoais form={form} />}
+              {currentStep === 1 && <StepEndereço form={form} />}
+              {currentStep === 2 && <StepMethodPayment form={form} />}
+              {currentStep === 3 && <StepObservations form={form} />}
+              {currentStep === 4 && <StepFinalization form={form} />}
+            </div>
 
-          <div className="mt-6">
-            {currentStep === 0 && <StepDadosPessoais form={form} />}
-            {currentStep === 1 && <StepEndereço form={form} />}
-            {currentStep === 2 && <StepMethodPayment form={form} />}
-            {currentStep === 3 && <StepObservations form={form} />}
-            {currentStep === 4 && <StepFinalization form={form} />}
-          </div>
+            <div className="mt-6 flex justify-between">
+              {currentStep > 0 && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="cursor-pointer"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setCurrentStep(currentStep - 1);
+                  }}
+                >
+                  Voltar
+                </Button>
+              )}
 
-          <div className="mt-6 flex justify-between">
-            {currentStep > 0 && (
-              <Button
-                type="button"
-                variant="outline"
-                className="cursor-pointer"
-                onClick={(e) => {
-                  e.preventDefault();
-                  setCurrentStep(currentStep - 1);
-                }}
-              >
-                Voltar
-              </Button>
-            )}
-
-            {currentStep < steps.length - 1 ? (
-              <Button
-                type="button"
-                onClick={(e) => {
-                  e.preventDefault();
-                  nextStep();
-                }}
-                className="cursor-pointer"
-              >
-                Proximo
-              </Button>
-            ) : (
-              <Button type="submit" className="cursor-pointer">
-                Finalizar
-              </Button>
-            )}
-          </div>
-        </form>
-      </Form>
-    </div>
+              {currentStep < steps.length - 1 ? (
+                <Button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    nextStep();
+                  }}
+                  className="cursor-pointer"
+                >
+                  Proximo
+                </Button>
+              ) : (
+                <Button type="submit" className="cursor-pointer">
+                  Finalizar
+                </Button>
+              )}
+            </div>
+          </form>
+        </Form>
+        <DialogContent className="sm:max-w-md">
+          <DialogCheckout  onClose={() => {
+            setDialogOpen(false);
+            dispatch(clearCart());
+          }} />
+        </DialogContent>
+      </div>
+    </Dialog>
   );
 }

@@ -13,6 +13,7 @@ export async function GET(request: Request) {
   try {
 
     const orders = await prisma.order.findMany()
+    
 
     return NextResponse.json(orders, { status: 200 });
     

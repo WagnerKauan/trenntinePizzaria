@@ -37,8 +37,8 @@ export type MethodPayment = "Pix" | "Cartão" | "Dinheiro";
 
 interface PromotionRule {
   category?: string;
-  tag?: string;
-  minQuantity?: number;
-  discount?: number;
+  tags?: string[];
+  minQuantity?: string;
+  discount?: string;
   bonusProduct?: string;
 }
