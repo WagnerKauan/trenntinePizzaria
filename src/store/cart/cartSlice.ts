@@ -8,11 +8,13 @@ export interface CartItem extends Product {
 type ActivePromotion = {
   id: string;
   name: string;
+  bonusProduct?: string;
+  discount?: number;
 };
 
 interface CardState {
   items: CartItem[];
-  activePromotion: ActivePromotion | null;
+  activePromotion: ActivePromotion[] | null;
 }
 
 const initalState: CardState = {
@@ -53,13 +55,34 @@ const cartSlice = createSlice({
 
     clearCart: () => initalState,
 
-    setActivePromotion: (state, action: PayloadAction<ActivePromotion>) => {
+    clearPromotion: (state) => {
+      state.activePromotion = null;
+    },
+
+    setActivePromotion: (state, action: PayloadAction<ActivePromotion[]>) => {
       state.activePromotion = action.payload;
+    },
+
+    removePromotion: (state, action: PayloadAction<ActivePromotion>) => {
+      const activePromotion = state.activePromotion?.filter(
+        (promotion) => promotion.id !== action.payload.id
+      );
+
+      if (activePromotion) {
+        state.activePromotion = activePromotion;
+      }
     },
   },
 });
 
-export const { addProduct, incrementQuantity, decrementQuantity, clearCart, setActivePromotion } =
-  cartSlice.actions;
+export const {
+  addProduct,
+  incrementQuantity,
+  decrementQuantity,
+  clearCart,
+  setActivePromotion,
+  clearPromotion,
+  removePromotion,
+} = cartSlice.actions;
 
 export default cartSlice.reducer;

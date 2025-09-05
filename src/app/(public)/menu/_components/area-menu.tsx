@@ -6,35 +6,50 @@ import { useDispatch } from "react-redux";
 import { addProduct } from "@/store/cart/cartSlice";
 import { useEffect, useState } from "react";
 import { Product } from "@/generated/prisma";
+import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select";
+import { SelectValue } from "@radix-ui/react-select";
 
 interface AreaMenuProps {
   products: Product[];
 }
 
 export function AreaMenu({ products }: AreaMenuProps) {
-  const [searchPizza, setSearchPizza] = useState("");
+  const [searchProducts, setSearchProducts] = useState("");
   const [productsFiltered, setProductsFiltered] = useState(products || []);
 
   const dispatch = useDispatch();
 
-  function handleAddToCart(pizza: Product) {
-    dispatch(addProduct(pizza));
+  function handleAddToCart(product: Product) {
+    dispatch(addProduct(product));
   }
 
   useEffect(() => {
-    if (searchPizza) {
-      const pizzasFiltered = products.filter((products) =>
-        products.name.toLowerCase().includes(searchPizza.toLowerCase())
+    if (searchProducts) {
+      const productsFiltered = products.filter((products) =>
+        products.name.toLowerCase().includes(searchProducts.toLowerCase())
       );
-      setProductsFiltered(pizzasFiltered);
+      setProductsFiltered(productsFiltered);
     } else {
       setProductsFiltered(products);
     }
-  }, [searchPizza, products]);
+  }, [searchProducts, products]);
+
+
+  function selectFilter(value: string) {
+    if (value === "pizza") {
+      const productsFiltered = products.filter((products) => products.category === "pizza");
+      setProductsFiltered(productsFiltered);
+    } else if (value === "drink") {
+      const productsFiltered = products.filter((products) => products.category === "drink");
+      setProductsFiltered(productsFiltered);
+    } else {
+      setProductsFiltered(products);
+    }
+  }
 
   return (
-    <section className="mt-40 px-2 xl:px-0">
-      <div className="flex items-center justify-center w-full">
+    <section className="mt-35 px-2 xl:px-0">
+      <div className="flex flex-col items-center w-full container mx-auto">
         <div
           className="flex items-center w-full max-w-md rounded-full bg-white px-3 shadow-lg border 
           border-gray-200 focus-within:border-primary-normal"
@@ -47,13 +62,25 @@ export function AreaMenu({ products }: AreaMenuProps) {
             id="search"
             placeholder="Busque por uma pizza..."
             className="ml-2 flex-1 bg-transparent p-2 text-gray-700 placeholder:text-gray-400 focus:outline-none"
-            value={searchPizza}
-            onChange={(e) => setSearchPizza(e.target.value)}
+            value={searchProducts}
+            onChange={(e) => setSearchProducts(e.target.value)}
           />
+        </div>
+
+        <div className="self-end">
+          <Select defaultValue="pizza" onValueChange={selectFilter}>
+            <SelectTrigger>
+              <SelectValue placeholder="Selecione uma categoria" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="pizza">Pizza</SelectItem>
+              <SelectItem value="drink">Bebida</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
       </div>
 
-      <div className="container mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 py-12">
+      <div className="container mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 py-10">
         {productsFiltered.length > 0 ? (
           productsFiltered.map((product, index) => (
             <CardMenuItem

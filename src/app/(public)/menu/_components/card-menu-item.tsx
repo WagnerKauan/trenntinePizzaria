@@ -2,7 +2,6 @@
 
 import { Product } from "@/generated/prisma";
 import { selectCartItemQuantity } from "@/store/cart/cartSelectors";
-import { Pizza } from "@/types";
 import Image from "next/image";
 import { useSelector } from "react-redux";
 
@@ -26,9 +25,24 @@ export function CardMenuItem({ product, addToCard }: CardMenuItemProps) {
         <p className="text-sm text-dark-800 line-clamp-2">
           {product.description}
         </p>
-        <span className="text-primary-normal font-bold text-lg">
-          R$ {product.price.toFixed(2).toString().replace(".", ",")}
-        </span>
+
+        {product.promotionalPrice && (
+          <div className="flex items-center gap-1.5">
+            <span className="text-dark-800 text-base line-through">
+              R$ {product.price.toFixed(2).toString().replace(".", ",")}
+            </span>
+            <span className="text-primary-normal font-bold text-lg">
+              R$ {product.promotionalPrice.toFixed(2).toString().replace(".", ",")}
+            </span>
+          </div>
+        )}
+
+
+        {!product.promotionalPrice && (
+          <span className="text-primary-normal font-bold text-lg">
+            R$ {product.price.toFixed(2).toString().replace(".", ",")}
+          </span>
+        )}
       </div>
       <div className="relative rounded-xl overflow-hidden w-[120px] h-[90px]">
         <Image

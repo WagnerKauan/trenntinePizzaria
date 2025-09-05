@@ -2,11 +2,13 @@
 
 import { Header } from "../_components/header";
 import { AreaMenu } from "./_components/area-menu";
-import { getAllProducts } from "../_data-access/get-all-products";
+import { getProductsWithPromotions } from "@/utils/promotions/get-products-with-promotions";
 
 export default async function Menu() {
 
-   const products = await getAllProducts();
+   const products = await getProductsWithPromotions();
+
+   console.log(products.length)
 
   return (
     <>

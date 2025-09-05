@@ -9,8 +9,8 @@ export interface ParsedPromo {
     category: string;
     tags: string[];
     minQuantity: number | undefined;
-    discountPercent: number | undefined;
-    bonusProductId: string | undefined;
+    discount: number | undefined;
+    bonusProduct: string | undefined;
   }
 };
 
@@ -21,11 +21,11 @@ export function parsePromotions(rawPromos: any[]): ParsedPromo[] {
     type: promo.type,
     active: promo.active,
     rule: {
-      category: promo.category,
-      tags: promo.tags,
-      minQuantity: promo.minQuantity ? Number(promo.minQuantity) : undefined,
-      discountPercent: promo.type === "PERCENT" ? Number(promo.discount) : undefined,
-      bonusProductId: promo.type === "COMBO" ? promo.bonusProduct : undefined,
+      category: promo.rules.category,
+      tags: promo.rules.tags,
+      minQuantity: promo.rules.minQuantity ? Number(promo.rules.minQuantity) : undefined,
+      discount: promo.type === "PERCENT" ? Number(promo.rules.discount) : undefined,
+      bonusProduct: promo.type === "COMBO" ? promo.rules.bonusProduct : undefined,
     },
   }));
 }

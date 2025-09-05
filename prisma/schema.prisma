@@ -40,26 +40,26 @@ enum MethodPayment {
 model User {
   id        String   @id @default(cuid())
   name      String?
-  email     String @unique
+  email     String   @unique
   password  String
   role      Role     @default(STAFF)
   createdAt DateTime @default(now())
 }
 
-
 model Product {
-  id          String   @id @default(cuid())
-  name        String
-  description String?
-  ingredients String?
-  price       Float
-  category    String
-  imageUrl    String?
-  tags        String[]
-  isFeatured  Boolean  @default(false)
-  active      Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  quantity    Int?
+  id               String   @id @default(cuid())
+  name             String
+  description      String?
+  ingredients      String?
+  price            Float
+  category         String
+  imageUrl         String?
+  tags             String[]
+  isFeatured       Boolean  @default(false)
+  active           Boolean  @default(true)
+  createdAt        DateTime @default(now())
+  quantity         Int?
+  promotionalPrice Float?
 }
 
 model Promotion {
@@ -71,7 +71,7 @@ model Promotion {
   startsAt    DateTime?
   endsAt      DateTime?
   imageUrl    String?
-  rules        Json
+  rules       Json
   createdAt   DateTime  @default(now())
 }
 
@@ -94,6 +94,9 @@ model Order {
   notes          String?
   total          Float
 
-  appliedPromotionName String?  
-  appliedPromotionId   String?  
+  startsAt DateTime?
+  endsAt   DateTime?
+
+  appliedPromotionName String?
+  appliedPromotionId   String?
 }

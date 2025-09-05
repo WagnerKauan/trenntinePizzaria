@@ -1,7 +1,7 @@
 "use client";
 
-import Link from 'next/link'
-import {  ShoppingCartIcon } from "lucide-react";
+import Link from "next/link";
+import { ShoppingCartIcon } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -13,30 +13,43 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { CardItem } from "./card-item";
 import { Button } from "./button";
-import { useSelector, useDispatch } from "react-redux";
-import { incrementQuantity, decrementQuantity } from "@/store/cart/cartSlice";
+import { useSelector, useDispatch, useStore } from "react-redux";
+import {
+  incrementQuantity,
+  decrementQuantity,
+  setActivePromotion,
+  CartItem,
+  clearPromotion,
+  removePromotion,
+} from "@/store/cart/cartSlice";
 import {
   selectCartItems,
+  selectCartPromotion,
   selectCartTotalPrice,
   selectCartTotalQuantity,
 } from "@/store/cart/cartSelectors";
-import { selectPromotions } from '@/store/promotions/promotionsSeletors';
-import { ParsedPromo, parsePromotions } from '@/utils/perse-promotion';
-import { use, useEffect, useState } from 'react';
+import { selectPromotions } from "@/store/promotions/promotionsSeletors";
+import { ParsedPromo, parsePromotions } from "@/utils/promotions/perse-promotion";
+import { useEffect, useState } from "react";
 
 export function ShoppingCart() {
   const cartItems = useSelector(selectCartItems);
   const totalQuantity = useSelector(selectCartTotalQuantity);
   const totalPrice = useSelector(selectCartTotalPrice);
-  const promotions = useSelector(selectPromotions)
+  const promotions = useSelector(selectPromotions);
+  const activePromotion = useSelector(selectCartPromotion);
   const [parsedPromotions, setParsedPromotions] = useState<ParsedPromo[]>([]);
   const dispatch = useDispatch();
-
 
   useEffect(() => {
     const parsedPromotions = parsePromotions(promotions);
     setParsedPromotions(parsedPromotions);
-  }, [promotions]); 
+  }, [promotions]);
+
+  useEffect(() => {
+    checkActivepromotions();
+  }, [cartItems, totalQuantity, parsedPromotions]);
+
 
 
   function handleIncrementQuantity(id: string) {
@@ -48,8 +61,83 @@ export function ShoppingCart() {
   }
 
   function checkActivepromotions() {
-    
+    if (parsedPromotions.length === 0) {
+      dispatch(clearPromotion());
+      return;
+    }
+
+    if (cartItems.length === 0) {
+      dispatch(clearPromotion());
+      return;
+    }
+
+
+    let foundValidPromotion = false;
+    let promotionsActive: {
+      id: string;
+      name: string;
+      discount?: number;
+      bonusProduct?: string;
+    }[] = [];
+
+    for (const promo of parsedPromotions) {
+      if (!promo.rule.minQuantity) {
+        continue;
+      }
+
+      if (isPromotionValid(promo, cartItems, totalQuantity)) {
+        foundValidPromotion = true;
+        promotionsActive.push({
+          id: promo.id,
+          name: promo.name,
+          discount: promo.rule.discount,
+          bonusProduct: promo.rule.bonusProduct,
+        });
+      } else {
+        dispatch(removePromotion(promo));
+      }
+    }
+
+    if (!foundValidPromotion) {
+      dispatch(clearPromotion());
+      return;
+    }
+
+    if (promotionsActive.length > 0) {
+      dispatch(setActivePromotion(promotionsActive));
+    }
   }
+
+  function isPromotionValid(
+    promo: ParsedPromo,
+    cartItems: CartItem[],
+    totalQuantityCart: number
+  ) {
+    const { minQuantity, category, tags } = promo.rule;
+
+    if (!minQuantity) return false;
+
+    if (minQuantity && totalQuantityCart < minQuantity) return false;
+
+    if (category) {
+      const countCategory = cartItems
+        .filter((item) => item.category === category)
+        .reduce((total, item) => total + item.quantity, 0);
+
+      if (countCategory < minQuantity) return false;
+    }
+
+    if (tags && tags.length > 0) {
+      const itemTags = cartItems.flatMap((item) => item.tags);
+
+      const allTagsPresent = tags.every((tag) => itemTags.includes(tag));
+
+      if (!allTagsPresent) return false;
+    }
+
+    return true;
+  }
+
 
   return (
     <Dialog>
@@ -82,7 +170,7 @@ export function ShoppingCart() {
         </DialogHeader>
 
         {cartItems.length > 0 && (
-          <ScrollArea className="p-4 h-[300px] ">
+          <ScrollArea className="p-4 h-[200px] ">
             <div className="flex flex-col gap-4">
               {cartItems?.map((product, index) => (
                 <CardItem
@@ -91,6 +179,7 @@ export function ShoppingCart() {
                   name={product.name}
                   price={product.price}
                   quantity={product.quantity}
+                  pricePromotion={product.promotionalPrice}
                   id={product.id}
                   incrementQuantity={handleIncrementQuantity}
                   decrementQuantity={handleDecrementQuantity}
@@ -100,8 +189,37 @@ export function ShoppingCart() {
           </ScrollArea>
         )}
 
+        <div className="space-y-2 mt-4">
+          {activePromotion &&
+            activePromotion.length > 0 &&
+            activePromotion.map((promotion) => (
+              <div
+                key={promotion.id}
+                className="flex items-center justify-between bg-green-50 border border-green-200 rounded-xl px-3 py-2 shadow-sm"
+              >
+                <span className="text-sm font-medium text-green-800">
+                  🎉 {promotion.name}
+                </span>
+
+                {promotion.discount && (
+                  <span className="text-sm font-semibold text-green-700">
+                    - {promotion.discount}%
+                  </span>
+                )}
+
+                {promotion.bonusProduct && (
+                  <span className="text-sm font-semibold text-green-700">
+                    + {promotion.bonusProduct}
+                  </span>
+                )}
+              </div>
+            ))}
+        </div>
+
         <div className="flex items-center justify-between">
-          <span className="font-bold text-dark-normal uppercase text-base lg:text-lg">total</span>
+          <span className="font-bold text-dark-normal uppercase text-base lg:text-lg">
+            total
+          </span>
           <span className="font-bold text-dark-normal text-base lg:text-lg">
             R$ {totalPrice.toFixed(2).toString().replace(".", ",")}
           </span>
@@ -110,7 +228,6 @@ export function ShoppingCart() {
         <Button
           className="w-full mt-4 bg-primary-normal hover:bg-primary-dark cursor-pointer"
           disabled={cartItems?.length === 0}
-          
         >
           <Link href="/checkout">Finalizar compra</Link>
         </Button>
