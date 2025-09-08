@@ -2,7 +2,11 @@
 
 import { Product } from "@/generated/prisma";
 import prisma from "@/lib/prisma";
+import { getProductsWithPromotions } from "@/utils/promotions/get-products-with-promotions";
 import { z } from "zod";
+import { getAllPromotions } from "../_data-access/get-all-promotions";
+import { parsePromotions } from "@/utils/promotions/perse-promotion";
+import { checkValidPromotion } from "@/utils/promotions/check-valid-promotion";
 
 const formSchema = z
   .object({
@@ -58,18 +62,51 @@ export async function createOrder(formData: CheckoutFormData) {
   }
 
   try {
-    const productsInCart = await prisma.product.findMany({
-      where: {
-        id: {
-          in: formData.items.map((item) => item.id),
-        },
-      },
-    });
+    const productIds = formData.items.map((product) => product.id);
+    const products = await getProductsWithPromotions(productIds);
+    const productsInCart = products.map((product) => ({
+      ...product,
+      quantity: formData.items.find((item) => item.id === product.id)!.quantity,
+    }));
 
-    const totalCart = productsInCart.reduce(
-      (acc, product) => acc + product.price,
+    const totalQuantityCart = productsInCart.reduce(
+      (acc, product) => acc + product.quantity!,
       0
     );
+
+    const promotions = await getAllPromotions();
+    const parsedPromotions = parsePromotions(promotions).filter(
+      (promotion) =>
+        promotion.rule.minQuantity !== undefined ||
+        promotion.rule.minQuantity !== null ||
+        promotion.rule.minQuantity !== 0
+    );
+
+    const orderPromotions = parsedPromotions.filter((promotion) =>
+      checkValidPromotion(promotion, productsInCart, totalQuantityCart)
+    );
+
+    const discount = orderPromotions.reduce((acc, promotion) => {
+      if (promotion.type === "PERCENT") {
+        return acc + promotion.rule.discount!;
+      }
+
+      return acc;
+    }, 0);
+
+    const totalCart = productsInCart.reduce((acc, product) => {
+      if (product.promotionalPrice) {
+        return acc + product.promotionalPrice * product.quantity!;
+      } else {
+        return acc + product.price * product.quantity!;
+      }
+    }, 0);
+
+    const totalCartWithDiscount =
+      Math.ceil(discount === 0 ? totalCart : totalCart - (totalCart * discount) / 100);
+    const bonusProducts = orderPromotions
+      .filter((promotion) => promotion.type === "COMBO")
+      .map((promotion) => promotion.rule.bonusProduct!);
 
     const newOrder = await prisma.order.create({
       data: {
@@ -86,7 +123,9 @@ export async function createOrder(formData: CheckoutFormData) {
         changeFor: formData.changeFor,
         notes: formData.notes,
         items: formData.items,
-        total: totalCart,
+        total: totalCartWithDiscount,
+        bonusProducts: bonusProducts && bonusProducts.length > 0 ? bonusProducts : [],
+        appliedPromotionName: orderPromotions.map((promotion) => promotion.name).join(","),
       },
     });
 

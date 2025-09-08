@@ -11,6 +11,7 @@ type UpdateUser = {
   name: string;
   email: string;
   password?: string;
+  isOpen: boolean;
 }
 
 const formSchema = z
@@ -19,6 +20,7 @@ const formSchema = z
       .string()
       .min(3, { message: "O nome deve ter pelo menos 3 caracteres" }),
     email: z.string().min(1, { message: "O email é obrigatório." }),
+    isOpen: z.boolean(),
     oldPassword: z.string().optional(),
     newPassword: z.string().optional(),
   })
@@ -102,6 +104,8 @@ export async function updateProfile(formData: ProfileFormData) {
     const data: UpdateUser = {
       name: formData.name,
       email: formData.email,
+      isOpen: formData.isOpen
+
     }
 
     if(formData.newPassword && formData.newPassword.trim() !== "") {

@@ -42,7 +42,7 @@ export function CardOrder({ order, handleUpdateStatus }: CartItemProps) {
   return (
     <article
       className="rounded-2xl shadow-lg border
-          border-gray-200 bg-white p-5 space-y-4 transition hover:shadow-xl"
+          border-gray-200 bg-white p-5 space-y-4 transition hover:shadow-xl flex flex-col justify-between"
     >
       <div className="flex items-center justify-between">
         <span className="font-bold text-base xl:text-lg text-gray-800">
@@ -86,7 +86,7 @@ export function CardOrder({ order, handleUpdateStatus }: CartItemProps) {
       <div className="space-y-2">
         <h4 className="font-semibold text-gray-700">Itens ({items.length})</h4>
         <ScrollArea className="h-[50px] overflow-auto px-2">
-          <ul className="space-y-2 pl-4 list-disc text-sm text-gray-600">
+          <ul className="space-y-2 pl-4 text-sm text-gray-600">
             {items?.map((item) => (
               <li key={item.id} className="flex items-center justify-between">
                 <span>
@@ -97,8 +97,28 @@ export function CardOrder({ order, handleUpdateStatus }: CartItemProps) {
                 </span>
               </li>
             ))}
+            
+            {order.bonusProducts?.map((item, index) => (
+              <li key={index} className="flex items-center justify-between">
+                <span>
+                  1x {item}
+                </span>
+                <span className="font-medium text-gray-800">
+                  gratuito
+                </span>
+              </li>
+            ))}
           </ul>
         </ScrollArea>
+      </div>
+      <hr className="border-gray-200" />
+      <div>
+        <h4 className="font-semibold text-gray-700">Promoções</h4>
+        {order.appliedPromotionName && order.appliedPromotionName.split(",").map((promotion, index) => (
+          <p key={index} className="text-sm text-gray-600">{promotion}</p>
+        ))}
+
+        {!order.appliedPromotionName && <p className="text-sm text-gray-600">Nenhuma promocão aplicada</p>}
       </div>
       <hr className="border-gray-200" />
       <div className="flex items-center justify-between">

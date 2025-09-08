@@ -19,7 +19,6 @@ export function DialogOrder({ order }: { order: Order }) {
       </DialogHeader>
 
       <div className="space-y-4 mt-2 text-sm text-gray-700">
-
         <div>
           <h4 className="font-semibold">Cliente</h4>
           <p>{order.name}</p>
@@ -36,7 +35,7 @@ export function DialogOrder({ order }: { order: Order }) {
 
         <div>
           <h4 className="font-semibold">Itens</h4>
-          <ul className="list-disc pl-5 space-y-1">
+          <ul className=" pl-5 space-y-1">
             {items.map((item) => (
               <li key={item.id} className="flex justify-between">
                 <span>
@@ -45,6 +44,14 @@ export function DialogOrder({ order }: { order: Order }) {
                 <span>{formatCurrency(item.price)}</span>
               </li>
             ))}
+
+            {order.bonusProducts.length > 0 &&
+              order.bonusProducts.map((item, index) => (
+                <li key={index} className="flex justify-between">
+                  <span>1x {item}</span>
+                  <span>gratiuto</span>
+                </li>
+              ))}
           </ul>
         </div>
 
@@ -71,16 +78,20 @@ export function DialogOrder({ order }: { order: Order }) {
 
         {order.appliedPromotionName && (
           <div>
-            <h4 className="font-semibold">Promoção aplicada</h4>
-            <p>{order.appliedPromotionName}</p>
+            <h4 className="font-semibold">Promoções aplicada</h4>
+            {order.appliedPromotionName &&
+              order.appliedPromotionName
+                .split(",")
+                .map((name, index) => <p key={index}>{name}</p>)}
           </div>
         )}
       </div>
 
-      {/* Botão de fechar */}
       <div className="mt-4 flex justify-end">
         <DialogClose asChild>
-          <Button variant="outline" className="cursor-pointer">Fechar</Button>
+          <Button variant="outline" className="cursor-pointer">
+            Fechar
+          </Button>
         </DialogClose>
       </div>
     </DialogContent>

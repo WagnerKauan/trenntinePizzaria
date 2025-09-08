@@ -44,6 +44,7 @@ model User {
   password  String
   role      Role     @default(STAFF)
   createdAt DateTime @default(now())
+  isOpen    Boolean @default(false)
 }
 
 model Product {
@@ -93,6 +94,7 @@ model Order {
   changeFor      String?
   notes          String?
   total          Float
+  bonusProducts String[]
 
   startsAt DateTime?
   endsAt   DateTime?

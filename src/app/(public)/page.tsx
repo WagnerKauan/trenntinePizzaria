@@ -8,7 +8,6 @@ import { getAllPromotions } from "./_data-access/get-all-promotions";
 import { Steps } from "./_components/steps";
 import { Contact } from "./_components/contact";
 import { Footer } from "./_components/footer";
-import { getAllProducts } from "./_data-access/get-all-products";
 import { getProductsWithPromotions } from "@/utils/promotions/get-products-with-promotions";
 
  

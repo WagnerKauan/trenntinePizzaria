@@ -48,7 +48,7 @@ export function AreaMenu({ products }: AreaMenuProps) {
   }
 
   return (
-    <section className="mt-35 px-2 xl:px-0">
+    <section className="mt-42 px-2 xl:px-0">
       <div className="flex flex-col items-center w-full container mx-auto">
         <div
           className="flex items-center w-full max-w-md rounded-full bg-white px-3 shadow-lg border 

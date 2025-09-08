@@ -5,20 +5,14 @@ import { ProfileFormData, userProfileForm } from "./profile-form";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import {
   Card,
-  CardAction,
   CardContent,
-  CardDescription,
-  CardFooter,
   CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
@@ -39,6 +33,7 @@ type User = Prisma.UserGetPayload<{
     id: true;
     name: true;
     email: true;
+    isOpen: true;
   };
 }>;
 
@@ -50,17 +45,21 @@ export function ProfileList({ user }: ProfileListProps) {
   const form = userProfileForm({
     name: user.name,
     email: user.email,
+    isOpen: user.isOpen,
   });
 
   useEffect(() => {
-  form.reset({
-    name: user.name!,
-    email: user.email,
-  });
-}, [user]);
+    form.reset({
+      name: user.name!,
+      email: user.email,
+    });
+  }, [user]);
 
   async function onSubmit(values: ProfileFormData) {
-    const response = await updateProfile(values);
+    const response = await updateProfile({
+      ...values,
+      isOpen: values.isOpen === "active" ? true : false,
+    });
 
     if (response.error) {
       toast.error(response.error);
@@ -114,6 +113,35 @@ export function ProfileList({ user }: ProfileListProps) {
                       </FormItem>
                     )}
                   />
+                </div>
+
+                <div className="space-y-4">
+                  <h2 className="text-base font-semibold text-gray-500">
+                    Status do estabelecimento
+                  </h2>
+
+                  <FormField
+                    control={form.control}
+                    name="isOpen"
+                    render={({ field }) => (
+                      <FormItem>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Selecione..." />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="active">Aberto</SelectItem>
+                            <SelectItem value="inactive">Fechado</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )} />
                 </div>
 
                 <div className="space-y-4">

@@ -3,9 +3,12 @@
 import prisma from "@/lib/prisma";
 import { parsePromotions } from "./perse-promotion";
 
-export async function getProductsWithPromotions() {
+
+export async function getProductsWithPromotions(productsIds?: string[]) {
+  
   const products = await prisma.product.findMany({
     where: {
+      ...(productsIds && productsIds.length > 0 && { id: { in: productsIds } }),
       active: true,
     },
   });

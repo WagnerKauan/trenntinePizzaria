@@ -5,6 +5,7 @@ export const selectCartItems = (state: RootState) => state.cart.items;
 export const selectCartTotalQuantity = (state: RootState) => 
   state.cart.items.reduce((total, item) => total + item.quantity, 0);
 
+
 export const selectCartTotalPrice = (state: RootState) => {
   const totalCart = state.cart.items.reduce((total, item) => {
 

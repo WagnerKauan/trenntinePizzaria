@@ -4,7 +4,7 @@ import { CheckoutFormData, useCheckoutForm } from "./checkout-form";
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import { Check } from "lucide-react";
+import { Check, Loader2 } from "lucide-react";
 import { StepDadosPessoais } from "./formSteps/stepDadosPessoais";
 import { StepEndereço } from "./formSteps/stepEndereço";
 import { StepMethodPayment } from "./formSteps/stepMethodPayment";
@@ -16,11 +16,10 @@ import {
 } from "@/store/cart/cartSelectors";
 
 import { StepFinalization } from "./formSteps/stepFinalization";
-import { formatWhatsappMessage } from "@/utils/formatWhatsappMessage";
 import { selectCheckoutData } from "@/store/checkout/checkoutSelectors";
 import { setData } from "@/store/checkout/checkoutSlice";
 import { clearCart } from "@/store/cart/cartSlice";
-import { Dialog, DialogContent,  } from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { DialogCheckout } from "./dialog-checkout";
 import { createOrder } from "../_actions/create-order";
 import { toast } from "sonner";
@@ -40,6 +39,7 @@ export function CheckoutList() {
   const [currentStep, setCurrentStep] = useState(0);
   const [dialogOpen, setDialogOpen] = useState(false);
   const dispatch = useDispatch();
+  const [loading, setLoading] = useState(false);
 
   const form = useCheckoutForm(checkoutData!);
 
@@ -59,6 +59,7 @@ export function CheckoutList() {
   }
 
   async function handleNewOrder(data: CheckoutFormData) {
+    setLoading(true);
     dispatch(setData(data));
 
     const response = await createOrder({
@@ -75,13 +76,15 @@ export function CheckoutList() {
       changeFor: data.changeFor,
       notes: data.notes,
       items: cartItems,
-    })
-    
-    if(!response) {
+    });
+
+    if (!response) {
       toast.error("Erro ao realizar o pedido!");
+      setLoading(false);
       return;
     }
-    
+
+    setLoading(false);
     setDialogOpen(true);
   }
 
@@ -163,18 +166,28 @@ export function CheckoutList() {
                   Proximo
                 </Button>
               ) : (
-                <Button type="submit" className="cursor-pointer">
-                  Finalizar
+                <Button
+                  disabled={loading}
+                  type="submit"
+                  className="cursor-pointer"
+                >
+                  {loading ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  ) : (
+                    "Finalizar pedido"
+                  )}
                 </Button>
               )}
             </div>
           </form>
         </Form>
         <DialogContent className="sm:max-w-md">
-          <DialogCheckout  onClose={() => {
-            setDialogOpen(false);
-            dispatch(clearCart());
-          }} />
+          <DialogCheckout
+            onClose={() => {
+              setDialogOpen(false);
+              dispatch(clearCart());
+            }}
+          />
         </DialogContent>
       </div>
     </Dialog>

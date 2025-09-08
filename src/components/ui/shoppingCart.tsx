@@ -13,7 +13,7 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { CardItem } from "./card-item";
 import { Button } from "./button";
-import { useSelector, useDispatch, useStore } from "react-redux";
+import { useSelector, useDispatch, } from "react-redux";
 import {
   incrementQuantity,
   decrementQuantity,
@@ -29,13 +29,17 @@ import {
   selectCartTotalQuantity,
 } from "@/store/cart/cartSelectors";
 import { selectPromotions } from "@/store/promotions/promotionsSeletors";
-import { ParsedPromo, parsePromotions } from "@/utils/promotions/perse-promotion";
+import {
+  ParsedPromo,
+  parsePromotions,
+} from "@/utils/promotions/perse-promotion";
 import { useEffect, useState } from "react";
+import { checkValidPromotion } from "@/utils/promotions/check-valid-promotion";
 
-export function ShoppingCart() {
+export function ShoppingCart({statusPizzaria}: {statusPizzaria: boolean}) {
   const cartItems = useSelector(selectCartItems);
   const totalQuantity = useSelector(selectCartTotalQuantity);
-  const totalPrice = useSelector(selectCartTotalPrice);
+  const totalPrice = Math.ceil(useSelector(selectCartTotalPrice));
   const promotions = useSelector(selectPromotions);
   const activePromotion = useSelector(selectCartPromotion);
   const [parsedPromotions, setParsedPromotions] = useState<ParsedPromo[]>([]);
@@ -49,8 +53,6 @@ export function ShoppingCart() {
   useEffect(() => {
     checkActivepromotions();
   }, [cartItems, totalQuantity, parsedPromotions]);
-
-
 
   function handleIncrementQuantity(id: string) {
     dispatch(incrementQuantity(id));
@@ -71,7 +73,6 @@ export function ShoppingCart() {
       return;
     }
 
-
     let foundValidPromotion = false;
     let promotionsActive: {
       id: string;
@@ -85,7 +86,7 @@ export function ShoppingCart() {
         continue;
       }
 
-      if (isPromotionValid(promo, cartItems, totalQuantity)) {
+      if (checkValidPromotion(promo, cartItems, totalQuantity)) {
         foundValidPromotion = true;
         promotionsActive.push({
           id: promo.id,
@@ -107,37 +108,6 @@ export function ShoppingCart() {
       dispatch(setActivePromotion(promotionsActive));
     }
   }
-
-  function isPromotionValid(
-    promo: ParsedPromo,
-    cartItems: CartItem[],
-    totalQuantityCart: number
-  ) {
-    const { minQuantity, category, tags } = promo.rule;
-
-    if (!minQuantity) return false;
-
-    if (minQuantity && totalQuantityCart < minQuantity) return false;
-
-    if (category) {
-      const countCategory = cartItems
-        .filter((item) => item.category === category)
-        .reduce((total, item) => total + item.quantity, 0);
-
-      if (countCategory < minQuantity) return false;
-    }
-
-    if (tags && tags.length > 0) {
-      const itemTags = cartItems.flatMap((item) => item.tags);
-
-      const allTagsPresent = tags.every((tag) => itemTags.includes(tag));
-
-      if (!allTagsPresent) return false;
-    }
-
-    return true;
-  }
-
 
   return (
     <Dialog>
@@ -170,7 +140,7 @@ export function ShoppingCart() {
         </DialogHeader>
 
         {cartItems.length > 0 && (
-          <ScrollArea className="p-4 h-[200px] ">
+          <ScrollArea className="p-4 h-[230px] ">
             <div className="flex flex-col gap-4">
               {cartItems?.map((product, index) => (
                 <CardItem
@@ -225,12 +195,14 @@ export function ShoppingCart() {
           </span>
         </div>
 
-        <Button
-          className="w-full mt-4 bg-primary-normal hover:bg-primary-dark cursor-pointer"
-          disabled={cartItems?.length === 0}
-        >
-          <Link href="/checkout">Finalizar compra</Link>
-        </Button>
+        {statusPizzaria && (
+          <Button
+            className="w-full mt-4 bg-primary-normal hover:bg-primary-dark cursor-pointer"
+            disabled={cartItems?.length === 0}
+          >
+            <Link href="/checkout">Finalizar compra</Link>
+          </Button>
+        )}
       </DialogContent>
     </Dialog>
   );

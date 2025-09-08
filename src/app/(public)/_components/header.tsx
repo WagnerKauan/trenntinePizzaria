@@ -14,7 +14,8 @@ import { Button } from "@/components/ui/button";
 import { ShoppingCart } from "@/components/ui/shoppingCart";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { getStatusPizzaria } from "../_data-access/get-status-pizzaria";
 
 export const sections = [
   { href: "#", label: "Home" },
@@ -25,6 +26,15 @@ export const sections = [
 
 export function Header() {
   const pathname = usePathname();
+  const [statusPizzaria, setStatusPizzaria] = useState(true);
+
+  useEffect(() => {
+    const statusPizzaria = async () => {
+      const status = await getStatusPizzaria();
+      setStatusPizzaria(status?.isOpen || false);
+    };
+    statusPizzaria();
+  }, []);
 
   useEffect(() => {
     if (typeof window !== "undefined" && window.location.hash) {
@@ -35,7 +45,16 @@ export function Header() {
   }, [pathname]);
 
   return (
-    <div className={`fixed top-0 left-0 right-0 z-10  bg-white shadow-md ${pathname === "/checkout" && "opacity-95"}`}>
+    <div
+      className={`fixed top-0 left-0 right-0 z-10 bg-white shadow-md ${
+        pathname === "/checkout" && "opacity-95"
+      }`}
+    >
+      {!statusPizzaria && (
+        <div className="bg-red-500 text-white py-2 text-center">
+          <p>Atendimento fechado, volte mais tarde.</p>
+        </div>
+      )}
       <header
         className="flex items-center
         justify-between px-4 py-6 container mx-auto"
@@ -65,22 +84,28 @@ export function Header() {
             className="flex items-center gap-7.5 flex-1 justify-end
             md:justify-items-start mr-7.5 md:mr-0 md:flex-initial"
           >
-            <ShoppingCart />
+            <ShoppingCart statusPizzaria={statusPizzaria} />
 
             {pathname === "/menu" ? (
               <Button
-              className="hidden cursor-pointer md:flex bg-primary-normal
+                disabled={!statusPizzaria}
+                className="hidden cursor-pointer md:flex bg-primary-normal
                hover:bg-primary-dark duration-300 px-8 py-5"
-            >
-              <Link className="w-full" href="/checkout">Fechar pedido</Link>
-            </Button> 
+              >
+                <Link className="w-full" href="/checkout">
+                  Fechar pedido
+                </Link>
+              </Button>
             ) : (
               <Button
-              className="hidden cursor-pointer md:flex bg-primary-normal
+                disabled={!statusPizzaria}
+                className="hidden cursor-pointer md:flex bg-primary-normal
                hover:bg-primary-dark duration-300 px-8 py-5"
-            >
-              <Link className="w-full" href="/menu">Pedir agora</Link>
-            </Button>
+              >
+                <Link className="w-full" href="/menu">
+                  Pedir agora
+                </Link>
+              </Button>
             )}
           </div>
 

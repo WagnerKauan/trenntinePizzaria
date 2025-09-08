@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 interface UserProfileFormProps {
   name: string | null;
   email: string | null;
+  isOpen: boolean | null;
 }
 
 const profileSchema = z
@@ -15,6 +16,7 @@ const profileSchema = z
       .string()
       .min(3, { message: "O nome deve ter pelo menos 3 caracteres" }),
     email: z.string().min(1, { message: "O email é obrigatório." }),
+    isOpen: z.string(),
     oldPassword: z.string().optional(),
     newPassword: z.string().optional(),
   })
@@ -54,12 +56,13 @@ const profileSchema = z
 
 export type ProfileFormData = z.infer<typeof profileSchema>;
 
-export function userProfileForm({ name, email }: UserProfileFormProps) {
+export function userProfileForm({ name, email, isOpen }: UserProfileFormProps) {
   return useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
       name: name || "",
       email: email || "",
+      isOpen: isOpen ? "active" : "inactive",
       oldPassword: "",
       newPassword: "",
     },
