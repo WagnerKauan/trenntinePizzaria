@@ -45,6 +45,12 @@ export async function updateProduct(formData: FormSchema) {
     };
   }
 
+   if(user.role !== "ADMIN") {
+    return {
+      error: "Usuário não autorizado",
+    };
+  }
+
   const schema = formSchema.safeParse(formData);
 
   if (!schema.success) {

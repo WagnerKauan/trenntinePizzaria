@@ -56,6 +56,12 @@ export async function createPromotion(formData: PromotionFormValues) {
     };
   }
 
+   if(user.role !== "ADMIN") {
+    return {
+      error: "Usuário não autorizado",
+    };
+  }
+
   const schema = formSchema.safeParse(formData);
 
   if (!schema.success) {

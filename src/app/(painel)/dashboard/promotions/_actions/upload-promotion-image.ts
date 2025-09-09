@@ -21,6 +21,12 @@ export async function uploadPromotionImage(formData: FormData) {
     };
   }
 
+   if(user.role !== "ADMIN") {
+    return {
+      error: "Usuário não autorizado",
+    };
+  }
+
   const shema = schema.safeParse(formData);
 
   if (!shema.success) {

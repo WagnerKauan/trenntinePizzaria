@@ -15,7 +15,7 @@ import { Plus, Search, SquarePen } from "lucide-react";
 import { DialogPromotion } from "./dialog-promotion";
 import { useEffect, useState } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Promotion } from "@/generated/prisma";
+import { Promotion, User } from "@/generated/prisma";
 import { Switch } from "@/components/ui/switch";
 import { PromotionAvatar } from "./promotion-avatar";
 import { PromotionRule } from "@/types";
@@ -25,11 +25,12 @@ import { toast } from "sonner";
 
 interface PromotionsListProps {
   promotions: Promotion[];
+  user: User;
 }
 
 export type PromotionValues = PromotionFormValues & { id: string };
 
-export function PromotionsList({ promotions }: PromotionsListProps) {
+export function PromotionsList({ promotions, user }: PromotionsListProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [filteredPromotions, setFilteredPromotions] = useState<
     Promotion[] | []
@@ -45,6 +46,7 @@ export function PromotionsList({ promotions }: PromotionsListProps) {
   }, [promotions]);
 
   function handleEditProduct(promotion: Promotion) {
+    if(user.role !== "ADMIN") return;
     let rules: PromotionRule = {};
 
     try {
@@ -117,6 +119,7 @@ export function PromotionsList({ promotions }: PromotionsListProps) {
   }
 
   async function handleUpdateProductStatus(productId: string, active: boolean) {
+    if(user.role !== "ADMIN" ) return;
     const updatedPromotions = promotions?.map((promotion) => {
       if (promotion.id === productId) {
         return { ...promotion, active };
@@ -147,11 +150,13 @@ export function PromotionsList({ promotions }: PromotionsListProps) {
               Promoções
             </CardTitle>
 
-            <DialogTrigger asChild>
-              <Button size={"icon"} className="cursor-pointer">
-                <Plus className="w-5 h-5" color="#fff" />
-              </Button>
-            </DialogTrigger>
+            {user.role === "ADMIN" && (
+              <DialogTrigger asChild>
+                <Button size={"icon"} className="cursor-pointer">
+                  <Plus className="w-5 h-5" color="#fff" />
+                </Button>
+              </DialogTrigger>
+            )}
 
             <DialogContent
               onInteractOutside={() => {
@@ -232,7 +237,7 @@ export function PromotionsList({ promotions }: PromotionsListProps) {
                     className="flex items-center justify-between px-5 py-4 hover:bg-stone-50 transition-colors"
                   >
                     <div className="flex items-center gap-3 max-w-md w-full">
-                      <PromotionAvatar promotion={promotion} />
+                      <PromotionAvatar promotion={promotion} user={user} />
                       <div className="flex flex-col">
                         <h4 className="font-semibold text-base">
                           {promotion.name}
@@ -246,15 +251,16 @@ export function PromotionsList({ promotions }: PromotionsListProps) {
                     <div className="flex items-center gap-2.5">
                       <Button
                         size={"icon"}
-                        className="cursor-pointer border-none bg-white"
+                        className={`border-none bg-white ${user.role === "ADMIN" && "cursor-pointer"}`}
                         variant={"outline"}
                         asChild
                         onClick={() => handleEditProduct(promotion)}
+                        disabled={user.role !== "ADMIN"}
                       >
                         <SquarePen className="w-5 h-5" />
                       </Button>
                       <Switch
-                        className="cursor-pointer"
+                        className={`${user.role === "ADMIN" && "cursor-pointer"}`}
                         checked={promotion.active}
                         onCheckedChange={(value) =>
                           handleUpdateProductStatus(promotion.id, value)

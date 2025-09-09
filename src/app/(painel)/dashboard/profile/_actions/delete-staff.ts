@@ -1,12 +1,18 @@
 "use server";
 
+
 import prisma from "@/lib/prisma";
 import { getCurrentUser } from "@/utils/jwt/getCurrentUser";
 import { revalidatePath } from "next/cache";
 
 
+export async function deleteStaff(id: string) {
 
-export async function updateProductStatus(productId: string, active: boolean) {
+  if(!id) {
+    return {
+      error: "Usuário nao encontrado",
+    }
+  }
 
   const user = await getCurrentUser();
 
@@ -18,30 +24,27 @@ export async function updateProductStatus(productId: string, active: boolean) {
 
    if(user.role !== "ADMIN") {
     return {
-      error: "Usuário não autorizado",
+      error: "Usuário nao autorizado",
     };
   }
 
   try {
 
-    await prisma.product.update({
+    await prisma.user.delete({
       where: {
-        id: productId,
-      },
-      data: {
-        active
+        id: id,
       }
     })
 
-    revalidatePath("/dashboard/products");
+    revalidatePath("/dashboard/profile");
 
     return {
-      message: "Produto atualizado com sucesso",
+      message: "Funcionario deletado com sucesso",
     }
 
   }catch(err) {
     return {
-      error: "Erro ao atualizar o produto",
+      error: "Erro ao deletar funcionario",
     }
   }
 }

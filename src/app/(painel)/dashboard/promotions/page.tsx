@@ -15,6 +15,6 @@ export default async function Promotions() {
   }
 
   return (
-    <PromotionsContent />
+    <PromotionsContent user={user} />
   )
 }

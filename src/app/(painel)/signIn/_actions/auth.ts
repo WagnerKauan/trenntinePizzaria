@@ -4,6 +4,7 @@ import prisma from "@/lib/prisma";
 import { z } from "zod";
 import { createToken } from "@/utils/jwt/createToken";
 import { setTokenCookie } from "@/utils/jwt/setTokenCookie";
+import bcrypt from "bcrypt";
 
 const signInSchema = z.object({
   email: z.string().min(1, { message: "O email é obrigatório." }),
@@ -41,9 +42,11 @@ export async function signIn({
   }
 
 
-  if (user.password !== password) {
+  const isPasswordValid = await bcrypt.compare(password, user.password);
+
+  if (!isPasswordValid) {
     return {
-      error: "Email ou senha incorretos.",
+      error: "Senha incorreta.",
     };
   }
 

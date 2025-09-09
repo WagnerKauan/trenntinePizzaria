@@ -16,6 +16,12 @@ export async function updatePromotionStatus(
     };
   }
 
+   if(user.role !== "ADMIN") {
+    return {
+      error: "Usuário não autorizado",
+    };
+  }
+
   try {
     const response = await prisma.promotion.update({
       where: {

@@ -62,9 +62,9 @@ const formSchema = z
 
 export async function updateProfile(formData: ProfileFormData) {
 
-  const userId = await getCurrentUser();
+  const user = await getCurrentUser();
 
-  if(!userId) {
+  if(!user) {
     return {
       error: "Usuário nao encontrado"
     }
@@ -81,18 +81,6 @@ export async function updateProfile(formData: ProfileFormData) {
   try {
 
     if(formData.oldPassword && formData.newPassword) {
-
-      const user = await prisma.user.findFirst({
-        where: {
-          id: userId,
-        }
-      });
-
-      if(!user) {
-        return {
-          error: "Usuário nao encontrado"
-        }
-      }
 
       if(user.password !== formData.oldPassword) {
         return {
@@ -114,7 +102,7 @@ export async function updateProfile(formData: ProfileFormData) {
 
      await prisma.user.update({
       where: {
-        id: userId,
+        id: user.id,
       },
       data,
     })

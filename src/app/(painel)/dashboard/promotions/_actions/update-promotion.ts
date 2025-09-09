@@ -60,6 +60,12 @@ export async function updatePromotion(formData: PromotionFormValues) {
     }
   }
 
+   if(user.role !== "ADMIN") {
+    return {
+      error: "Usuário não autorizado",
+    };
+  }
+
   try {
     
     await prisma.promotion.update({

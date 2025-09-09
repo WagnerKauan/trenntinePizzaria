@@ -15,7 +15,7 @@ export default async function Products() {
 
   return(
     <>
-      <ProductContent />
+      <ProductContent user={user} />
     </>
   )
 }

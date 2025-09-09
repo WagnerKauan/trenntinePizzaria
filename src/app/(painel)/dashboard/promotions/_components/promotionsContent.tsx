@@ -1,18 +1,21 @@
 "use server";
 
+import { User } from "@/generated/prisma";
 import { getAllPromotions } from "../_data-access/get-all-promotions";
 import { PromotionsList } from "./promotionsList";
-import { Promotion } from "@/generated/prisma";
 
 
+interface PromotionContentProps {
+  user: User;
+}
 
-export async function PromotionsContent() {
+export async function PromotionsContent({  user }: PromotionContentProps) {
   
   const promotions = await getAllPromotions()
 
 
   
   return (
-    <PromotionsList promotions={promotions} />
+    <PromotionsList promotions={promotions} user={user} />
   )
 }

@@ -19,6 +19,12 @@ export async function uploadProductImage({
     };
   }
 
+   if(user.role !== "ADMIN") {
+    return {
+      error: "Usuário não autorizado",
+    };
+  }
+
   if (!productImageUrl) {
     return {
       error: "Imagem nao encontrada",

@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { Prisma } from "@/generated/prisma";
+import { Prisma, User } from "@/generated/prisma";
 import { DialogProduct } from "./dialog-product";
 import { useEffect, useState } from "react";
 import Image from "next/image";
@@ -27,9 +27,10 @@ type Product = Prisma.ProductGetPayload<{}>;
 
 interface ProductListProps {
   products: Product[];
+  user: User;
 }
 
-export function ProductsList({ products }: ProductListProps) {
+export function ProductsList({ products, user }: ProductListProps) {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [productsFiltered, setProductsFiltered] = useState<Product[]>(
     products || []
@@ -38,15 +39,21 @@ export function ProductsList({ products }: ProductListProps) {
   const [search, setSearch] = useState("");
 
   useEffect(() => {
-    setProductsFiltered(products.sort((a, b) => a.name.localeCompare(b.name)) || []);  
+    setProductsFiltered(
+      products.sort((a, b) => a.name.localeCompare(b.name)) || []
+    );
   }, [products]);
 
   function handleEditProduct(product: Product) {
+    if(user.role !== "ADMIN") return;
+    
     setEditingProduct(product);
     setDialogOpen(true);
   }
 
   async function handleUpdateProductStatus(productId: string, active: boolean) {
+    if(user.role !== "ADMIN") return; 
+
     try {
       const updatedProducts = products?.map((product) => {
         if (product.id === productId) {
@@ -92,7 +99,7 @@ export function ProductsList({ products }: ProductListProps) {
 
     setProductsFiltered(filteredProducts || []);
 
-    console.log(filteredProducts)
+    console.log(filteredProducts);
   }
 
   return (
@@ -110,11 +117,13 @@ export function ProductsList({ products }: ProductListProps) {
               Produtos
             </CardTitle>
 
-            <DialogTrigger asChild>
-              <Button size={"icon"} className="cursor-pointer">
-                <Plus className="w-5 h-5" color="#fff" />
-              </Button>
-            </DialogTrigger>
+            {user.role === "ADMIN" && (
+              <DialogTrigger asChild>
+                <Button size={"icon"} className="cursor-pointer">
+                  <Plus className="w-5 h-5" color="#fff" />
+                </Button>
+              </DialogTrigger>
+            )}
 
             <DialogContent
               onInteractOutside={() => {
@@ -190,14 +199,14 @@ export function ProductsList({ products }: ProductListProps) {
                     </span>
                   </div>
                 )}
-                
+
                 {productsFiltered.map((product) => (
                   <li
                     key={product.id}
                     className="flex items-center justify-between px-5 py-4 hover:bg-stone-50 transition-colors"
                   >
                     <div className="flex items-center gap-3 max-w-md w-full">
-                      <ProductAvatar product={product} />
+                      <ProductAvatar product={product} user={user} />
                       <div className="flex flex-col">
                         <h4 className="font-semibold text-base">
                           {product.name}
@@ -211,10 +220,11 @@ export function ProductsList({ products }: ProductListProps) {
                     <div className="flex items-center gap-2.5">
                       <Button
                         size={"icon"}
-                        className="cursor-pointer border-none bg-white"
+                        className={`border-none bg-white ${user.role === "ADMIN" && "cursor-pointer"}`}
                         variant={"outline"}
                         asChild
                         onClick={() => handleEditProduct(product)}
+                        disabled={user.role !== "ADMIN"}
                       >
                         <SquarePen className="w-5 h-5" />
                       </Button>
@@ -223,7 +233,7 @@ export function ProductsList({ products }: ProductListProps) {
                         onCheckedChange={(active) =>
                           handleUpdateProductStatus(product.id, active)
                         }
-                        className="cursor-pointer"
+                        className={`${user.role === "ADMIN" && "cursor-pointer"}`}
                       />
                     </div>
                   </li>

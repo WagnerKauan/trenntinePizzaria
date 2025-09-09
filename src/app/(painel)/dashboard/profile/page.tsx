@@ -15,7 +15,7 @@ export default async function Profile() {
 
   return (
     <>
-      <ProfileContent userId={user} />
+      <ProfileContent user={user} />
     </>
   )
 }
