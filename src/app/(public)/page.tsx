@@ -1,5 +1,3 @@
-"use server";
-
 import { FeaturedPizzas } from "./_components/highlights/featuredPizzas";
 import { Header } from "./_components/header";
 import { Hero } from "./_components/hero";
@@ -10,11 +8,9 @@ import { Contact } from "./_components/contact";
 import { Footer } from "./_components/footer";
 import { getProductsWithPromotions } from "@/utils/promotions/get-products-with-promotions";
 
- 
+export const revalidate = 0;
 
 export default async function Home() {
-  
-
   const products = await getProductsWithPromotions();
   const promotions = await getAllPromotions();
 
@@ -25,7 +21,7 @@ export default async function Home() {
       <Hero />
 
       <FeaturedPizzas products={products} />
-      
+
       <Promotions promotions={promotions} />
 
       <Steps />
@@ -36,4 +32,3 @@ export default async function Home() {
     </>
   );
 }
-
