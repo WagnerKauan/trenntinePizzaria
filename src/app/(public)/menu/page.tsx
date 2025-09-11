@@ -1,4 +1,3 @@
-"use server";
 
 import { Header } from "../_components/header";
 import { AreaMenu } from "./_components/area-menu";
