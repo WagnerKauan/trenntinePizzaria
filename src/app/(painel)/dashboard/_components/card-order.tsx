@@ -44,7 +44,7 @@ export function CardOrder({ order, handleUpdateStatus }: CartItemProps) {
       className="rounded-2xl shadow-lg border
           border-gray-200 bg-white p-5 space-y-4 transition hover:shadow-xl flex flex-col justify-between"
     >
-      <div className="flex items-center justify-between">
+      <div className="flex flex-row items-center justify-between">
         <span className="font-bold text-base xl:text-lg text-gray-800">
           {date}
         </span>

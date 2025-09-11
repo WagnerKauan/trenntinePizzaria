@@ -17,19 +17,30 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useState } from "react";
 import { updateStatusOrder } from "../_actions/update-status-order";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { format } from "date-fns";
+import { ButtonPickerOrder } from "./button-date";
 
 export function OrdersList() {
   const [search, setSearch] = useState("");
   const [ordersFiltered, setOrdersFiltered] = useState<Order[]>([]);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const date = searchParams.get("date");
   const queryClient = useQueryClient();
 
   const { data, isLoading, refetch } = useQuery({
-    queryKey: ["get-orders"],
+    queryKey: ["get-orders", date],
 
     queryFn: async () => {
-      const url = `${process.env.NEXT_PUBLIC_URL}/api/trentinne/orders`;
+      let activeDate = date;
+
+      if(!activeDate) {
+        const today = format(new Date(), "yyyy-MM-dd");
+        activeDate = today;
+      }
+
+      const url = `${process.env.NEXT_PUBLIC_URL}/api/trentinne/orders?date=${activeDate}`;
       const response = await fetch(url);
       const json = (await response.json()) as Order[];
 
@@ -88,37 +99,43 @@ export function OrdersList() {
         </CardHeader>
 
         <CardContent>
-          <div className="flex items-center justify-between gap-3 sm:gap-10 flex-wrap">
-            <div className="relative w-full flex-1">
-              <Search
-                size={18}
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"
-              />
-              <Input
-                type="search"
-                placeholder="Pesquisar pedidos..."
-                className="pl-10 w-full flex-1 focus-visible:ring-2 focus-visible:ring-primary 
-                    focus-visible:ring-offset-1 focus-visible:border-transparent"
-                onChange={(e) => handleSearch(e.target.value)}
-                value={search}
-              />
+          <div className=" flex flex-col gap-5">
+            <div className="flex items-center justify-between gap-3 sm:gap-10 flex-wrap">
+              <div className="relative w-full flex-1">
+                <Search
+                  size={18}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"
+                />
+                <Input
+                  type="search"
+                  placeholder="Pesquisar pedidos..."
+                  className="pl-10 w-full flex-1 focus-visible:ring-2 focus-visible:ring-primary
+                      focus-visible:ring-offset-1 focus-visible:border-transparent"
+                  onChange={(e) => handleSearch(e.target.value)}
+                  value={search}
+                />
+              </div>
+              <Select defaultValue="ALL" onValueChange={selectOrderStatus}>
+                <SelectTrigger className="w-full max-w-[150px] xl:max-w-xs">
+                  <SelectValue placeholder="Filtrar por" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="ALL">Todos</SelectItem>
+                  <SelectItem value="PENDING">Aguardando</SelectItem>
+                  <SelectItem value="PREPARATION">Em preparo</SelectItem>
+                  <SelectItem value="CONCLUDED">Finalizado</SelectItem>
+                  <SelectItem value="CANCELED">Cancelado</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
-            <Select defaultValue="ALL" onValueChange={selectOrderStatus}>
-              <SelectTrigger className="w-full max-w-[150px] xl:max-w-xs">
-                <SelectValue placeholder="Filtrar por" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="ALL">Todos</SelectItem>
-                <SelectItem value="PENDING">Aguardando</SelectItem>
-                <SelectItem value="PREPARATION">Em preparo</SelectItem>
-                <SelectItem value="CONCLUDED">Finalizado</SelectItem>
-                <SelectItem value="CANCELED">Cancelado</SelectItem>
-              </SelectContent>
-            </Select>
+
+            <div>
+              <ButtonPickerOrder />
+            </div>
           </div>
 
           <ScrollArea className="h-[650px] px-4  mt-10">
-            <section className=" grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
+            <section className=" grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
               {isLoading && <p>Carregando...</p>}
               {!isLoading && !ordersFiltered?.length && (
                 <p>Nenhum pedido encontrado</p>

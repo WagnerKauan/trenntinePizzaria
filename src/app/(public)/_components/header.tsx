@@ -16,6 +16,8 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { getStatusPizzaria } from "../_data-access/get-status-pizzaria";
+import { useSelector } from "react-redux";
+import { selectCartTotalQuantity } from "@/store/cart/cartSelectors";
 
 export const sections = [
   { href: "#", label: "Home" },
@@ -27,6 +29,7 @@ export const sections = [
 export function Header() {
   const pathname = usePathname();
   const [statusPizzaria, setStatusPizzaria] = useState(true);
+  const quantityCart = useSelector(selectCartTotalQuantity)
 
   useEffect(() => {
     const statusPizzaria = async () => {
@@ -88,21 +91,24 @@ export function Header() {
 
             {pathname === "/menu" ? (
               <Button
-                disabled={!statusPizzaria}
-                className="hidden cursor-pointer md:flex bg-primary-normal
-               hover:bg-primary-dark duration-300 px-8 py-5"
+                disabled={!statusPizzaria || quantityCart === 0}
+                className={`hidden cursor-pointer md:flex bg-primary-normal
+               hover:bg-primary-dark duration-300 px-8 py-5 ${quantityCart === 0 && "opacity-50 pointer-events-none"}`}
+               asChild
+               
               >
-                <Link className="w-full" href="/checkout">
+                <Link href="/checkout">
                   Fechar pedido
                 </Link>
               </Button>
-            ) : (
+            ) : pathname !== "/checkout" && (
               <Button
                 disabled={!statusPizzaria}
                 className="hidden cursor-pointer md:flex bg-primary-normal
                hover:bg-primary-dark duration-300 px-8 py-5"
+               asChild
               >
-                <Link className="w-full" href="/menu">
+                <Link href="/menu">
                   Pedir agora
                 </Link>
               </Button>

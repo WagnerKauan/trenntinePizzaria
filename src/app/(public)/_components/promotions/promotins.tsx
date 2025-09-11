@@ -1,25 +1,50 @@
 "use client";
 
 import Image from "next/image";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-} from "@/components/ui/carousel";
-import Autoplay from "embla-carousel-autoplay";
 import { CardPromotions } from "./cardPromotions";
 import { Promotion } from "@/generated/prisma";
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { setPromotions } from "@/store/promotions/promotionsSlice";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Grid, Pagination, Autoplay as SwiperAutoplay } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/grid";
+import "swiper/css/pagination";
 
 export function Promotions({ promotions }: { promotions: Promotion[] }) {
-
   const dispatch = useDispatch();
+  const swiperRef = useRef<any>(null)
+  const [slidesPerView, setSlidesPerView] = useState(3);
+  const [gridRows, setGridRows] = useState(2);
 
+  function handleResize() {
+    const width = window.innerWidth;
+
+    if(width < 640) {
+      setSlidesPerView(1);
+      setGridRows(1);
+    }else if(width < 1024) {
+      setSlidesPerView(2);
+      setGridRows(2);
+    }else {
+      setSlidesPerView(3);
+      setGridRows(2);
+    }
+
+    swiperRef.current?.swiper.update();
+  }
 
   useEffect(() => {
-    dispatch(setPromotions(promotions));  
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    }
+  }, []);
+
+  useEffect(() => {
+    dispatch(setPromotions(promotions));
   }, [promotions]);
 
   return (
@@ -40,34 +65,25 @@ export function Promotions({ promotions }: { promotions: Promotion[] }) {
       </div>
 
       <article className="bg-secondary-light py-10">
-        <div className="container mx-auto max-w-7xl">
-          <div className="hidden lg:grid grid-cols-3 gap-10 xl:gap-20 p-6 xl:px-10">
+        <div className="container mx-2 sm:mx-auto max-w-7xl">
+          <Swiper
+            ref={swiperRef}
+            slidesPerView={slidesPerView} 
+            grid={{ rows: gridRows, fill: "row" }} 
+            spaceBetween={30}
+            pagination={{ clickable: true }}
+            autoplay={{ delay: 4000 }}
+            modules={[Grid, Pagination, SwiperAutoplay]}
+            className="mySwiper"
+            centeredSlides={slidesPerView === 1}
+            
+          >
             {promotions.map((promotion) => (
-              <CardPromotions key={promotion.id} promotion={promotion} />
+              <SwiperSlide key={promotion.id} >
+                <CardPromotions promotion={promotion} />
+              </SwiperSlide>
             ))}
-          </div>
-
-          {/* MOBILE PROMOTIONS */}
-          <div className="block lg:hidden p-6">
-            <Carousel
-              opts={{
-                align: "center",
-                loop: true,
-              }}
-              plugins={[Autoplay({ delay: 4000 })]}
-            >
-              <CarouselContent className="space-y-6">
-                {promotions.map((promotion) => (
-                  <CarouselItem
-                    key={promotion.id}
-                    className="pl-14 md:basis-1/2"
-                  >
-                    <CardPromotions promotion={promotion} />
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-            </Carousel>
-          </div>
+          </Swiper>
         </div>
       </article>
     </section>

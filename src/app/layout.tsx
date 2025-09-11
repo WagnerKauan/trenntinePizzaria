@@ -13,8 +13,25 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "Trenntine Pizzaria",
-  description: "A pizzaria digital mais gostosa da internet!",
+  title: "Trenntine Pizzaria | Delivery Online",
+  description: "Peça sua pizza favorita na Trenntine Pizzaria 🍕✨ Delivery rápido, massa artesanal e as melhores promoções. A pizzaria digital mais gostosa da internet!",
+
+  keywords: [
+    "pizzaria online",
+    "pizza delivery",
+    "pizza artesanal",
+    "pizzaria digital",
+    "Trenntine Pizzaria",
+    "promoções de pizza",
+  ],
+
+  authors: [{ name: "Trenntine Pizzaria" }],
+  creator: "Trenntine Pizzaria",
+
+    robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({

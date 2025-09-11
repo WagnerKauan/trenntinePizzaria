@@ -108,6 +108,13 @@ export async function createOrder(formData: CheckoutFormData) {
       .filter((promotion) => promotion.type === "COMBO")
       .map((promotion) => promotion.rule.bonusProduct!);
 
+    const year = new Date().getFullYear();
+    const month = new Date().getMonth() + 1;
+    const day = new Date().getDate();
+
+    const startDate = new Date(Date.UTC(year, month - 1, day, 0, 0, 0, 0));
+    const endDate = new Date(Date.UTC(year, month - 1, day, 23, 59, 59, 999));
+
     const newOrder = await prisma.order.create({
       data: {
         name: formData.name,
@@ -126,6 +133,9 @@ export async function createOrder(formData: CheckoutFormData) {
         total: totalCartWithDiscount,
         bonusProducts: bonusProducts && bonusProducts.length > 0 ? bonusProducts : [],
         appliedPromotionName: orderPromotions.map((promotion) => promotion.name).join(","),
+
+        startsAt: startDate,
+        endsAt: endDate,
       },
     });
 

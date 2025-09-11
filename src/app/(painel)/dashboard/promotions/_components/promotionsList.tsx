@@ -239,7 +239,7 @@ export function PromotionsList({ promotions, user }: PromotionsListProps) {
                     <div className="flex items-center gap-3 max-w-md w-full">
                       <PromotionAvatar promotion={promotion} user={user} />
                       <div className="flex flex-col">
-                        <h4 className="font-semibold text-base">
+                        <h4 className="font-semibold text-base line-clamp-1">
                           {promotion.name}
                         </h4>
                         <span className="text-sm text-stone-500">

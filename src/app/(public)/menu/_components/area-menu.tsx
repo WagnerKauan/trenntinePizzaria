@@ -16,6 +16,7 @@ interface AreaMenuProps {
 export function AreaMenu({ products }: AreaMenuProps) {
   const [searchProducts, setSearchProducts] = useState("");
   const [productsFiltered, setProductsFiltered] = useState(products || []);
+  const [selectedCategory, setSelectedCategory] = useState("pizza");
 
   const dispatch = useDispatch();
 
@@ -31,11 +32,13 @@ export function AreaMenu({ products }: AreaMenuProps) {
       setProductsFiltered(productsFiltered);
     } else {
       setProductsFiltered(products);
+      selectFilter(selectedCategory);
     }
   }, [searchProducts, products]);
 
 
   function selectFilter(value: string) {
+    setSelectedCategory(value);
     if (value === "pizza") {
       const productsFiltered = products.filter((products) => products.category === "pizza");
       setProductsFiltered(productsFiltered);
@@ -68,7 +71,7 @@ export function AreaMenu({ products }: AreaMenuProps) {
         </div>
 
         <div className="self-end">
-          <Select defaultValue="pizza" onValueChange={selectFilter}>
+          <Select defaultValue={selectedCategory} onValueChange={selectFilter}>
             <SelectTrigger>
               <SelectValue placeholder="Selecione uma categoria" />
             </SelectTrigger>

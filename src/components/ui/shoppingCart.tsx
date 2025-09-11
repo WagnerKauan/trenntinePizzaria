@@ -13,7 +13,7 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { CardItem } from "./card-item";
 import { Button } from "./button";
-import { useSelector, useDispatch, } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import {
   incrementQuantity,
   decrementQuantity,
@@ -36,7 +36,7 @@ import {
 import { useEffect, useState } from "react";
 import { checkValidPromotion } from "@/utils/promotions/check-valid-promotion";
 
-export function ShoppingCart({statusPizzaria}: {statusPizzaria: boolean}) {
+export function ShoppingCart({ statusPizzaria }: { statusPizzaria: boolean }) {
   const cartItems = useSelector(selectCartItems);
   const totalQuantity = useSelector(selectCartTotalQuantity);
   const totalPrice = Math.ceil(useSelector(selectCartTotalPrice));
@@ -197,8 +197,11 @@ export function ShoppingCart({statusPizzaria}: {statusPizzaria: boolean}) {
 
         {statusPizzaria && (
           <Button
-            className="w-full mt-4 bg-primary-normal hover:bg-primary-dark cursor-pointer"
-            disabled={cartItems?.length === 0}
+            disabled={totalQuantity === 0}
+            className={`w-full mt-4 bg-primary-normal hover:bg-primary-dark cursor-pointer ${
+              totalQuantity === 0 ? "opacity-50 pointer-events-none" : ""
+            }`}
+            asChild
           >
             <Link href="/checkout">Finalizar compra</Link>
           </Button>
