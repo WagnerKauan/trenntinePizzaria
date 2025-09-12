@@ -14,7 +14,7 @@ import { CardOrder } from "./card-order";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Order } from "@/generated/prisma";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { updateStatusOrder } from "../_actions/update-status-order";
 import { toast } from "sonner";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -23,7 +23,7 @@ import { ButtonPickerOrder } from "./button-date";
 
 export function OrdersList() {
   const [search, setSearch] = useState("");
-  const [ordersFiltered, setOrdersFiltered] = useState<Order[]>([]);
+  const [status, setStatus] = useState("ALL");
   const router = useRouter();
   const searchParams = useSearchParams();
   const date = searchParams.get("date");
@@ -35,7 +35,7 @@ export function OrdersList() {
     queryFn: async () => {
       let activeDate = date;
 
-      if(!activeDate) {
+      if (!activeDate) {
         const today = format(new Date(), "yyyy-MM-dd");
         activeDate = today;
       }
@@ -48,36 +48,40 @@ export function OrdersList() {
         return [];
       }
 
-      setOrdersFiltered(json);
       return json;
     },
     staleTime: 20000,
     refetchInterval: 60000,
   });
 
+  const filteredOrders = useMemo(() => {
+    if(!data) return [];
+
+    let result = data;
+
+    if(status !== "ALL") {
+      result = result.filter((order) => order.status === status);
+    }
+
+    if(search) {
+      result = result.filter((order) => order.name.toLowerCase().includes(search.toLowerCase()));
+    }
+
+    return result;
+  }, [status, search, data]);
+
   function handleSearch(value: string) {
     setSearch(value);
-    const filteredOrders = data?.filter((order) => {
-      return order.name.toLowerCase().includes(value.toLowerCase());
-    });
-    setOrdersFiltered(filteredOrders || []);
   }
 
   function selectOrderStatus(value: string) {
-    if (value === "ALL") {
-      setOrdersFiltered(data || []);
-    } else {
-      const filteredOrders = data?.filter((order) => order.status === value);
-      setOrdersFiltered(filteredOrders || []);
-    }
+    setStatus(value);
   }
 
-
   async function handleUpdateStatus(id: string, status: string) {
-    
-    const response = await updateStatusOrder({id, status});
-    
-    if(response.error) {
+    const response = await updateStatusOrder({ id, status });
+
+    if (response.error) {
       toast.error(response.error);
       return;
     }
@@ -87,7 +91,6 @@ export function OrdersList() {
     await refetch();
     toast.success(response.message);
   }
-
 
   return (
     <section className="mx-auto">
@@ -115,7 +118,7 @@ export function OrdersList() {
                   value={search}
                 />
               </div>
-              <Select defaultValue="ALL" onValueChange={selectOrderStatus}>
+              <Select defaultValue={status} onValueChange={selectOrderStatus}>
                 <SelectTrigger className="w-full max-w-[150px] xl:max-w-xs">
                   <SelectValue placeholder="Filtrar por" />
                 </SelectTrigger>
@@ -137,11 +140,15 @@ export function OrdersList() {
           <ScrollArea className="h-[650px] px-4  mt-10">
             <section className=" grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
               {isLoading && <p>Carregando...</p>}
-              {!isLoading && !ordersFiltered?.length && (
+              {!isLoading && filteredOrders?.length === 0 && (
                 <p>Nenhum pedido encontrado</p>
               )}
-              {ordersFiltered?.map((order) => (
-                <CardOrder key={order.id} order={order} handleUpdateStatus={handleUpdateStatus} />
+              {filteredOrders?.map((order) => (
+                <CardOrder
+                  key={order.id}
+                  order={order}
+                  handleUpdateStatus={handleUpdateStatus}
+                />
               ))}
             </section>
           </ScrollArea>

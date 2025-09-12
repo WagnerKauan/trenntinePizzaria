@@ -1,5 +1,3 @@
-"use server";
-
 import { getCurrentUser } from "@/utils/jwt/getCurrentUser";
 import { redirect } from "next/navigation";
 import { OrdersContent } from "./_components/orders-content";
