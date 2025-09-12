@@ -102,8 +102,10 @@ export async function createOrder(formData: CheckoutFormData) {
       }
     }, 0);
 
-    const totalCartWithDiscount =
-      Math.ceil(discount === 0 ? totalCart : totalCart - (totalCart * discount) / 100);
+    const totalCartWithDiscount = Math.ceil(
+      discount === 0 ? totalCart : totalCart - (totalCart * discount) / 100
+    );
+    
     const bonusProducts = orderPromotions
       .filter((promotion) => promotion.type === "COMBO")
       .map((promotion) => promotion.rule.bonusProduct!);
@@ -131,8 +133,11 @@ export async function createOrder(formData: CheckoutFormData) {
         notes: formData.notes,
         items: formData.items,
         total: totalCartWithDiscount,
-        bonusProducts: bonusProducts && bonusProducts.length > 0 ? bonusProducts : [],
-        appliedPromotionName: orderPromotions.map((promotion) => promotion.name).join(","),
+        bonusProducts:
+          bonusProducts && bonusProducts.length > 0 ? bonusProducts : [],
+        appliedPromotionName: orderPromotions
+          .map((promotion) => promotion.name)
+          .join(","),
 
         startsAt: startDate,
         endsAt: endDate,

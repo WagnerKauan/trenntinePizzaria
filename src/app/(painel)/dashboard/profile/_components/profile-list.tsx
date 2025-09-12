@@ -89,17 +89,20 @@ export function ProfileList({ user, staffs }: ProfileListProps) {
                 Meu Perfil {user.role === "ADMIN" ? "(Admin)" : "(Funcionario)"}
               </CardTitle>
 
-              <Button
-                size={"icon"}
-                className="cursor-pointer"
-                type="button"
-                onClick={(e) => {
-                  e.preventDefault();
-                  setDialogOpen(true);
-                }}
-              >
-                <Plus className="w-5 h-5" color="#fff" />
-              </Button>
+              {user.role === "ADMIN" && (
+                <Button
+                  size={"icon"}
+                  className="cursor-pointer"
+                  type="button"
+                  disabled={user.role !== "ADMIN"}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setDialogOpen(true);
+                  }}
+                >
+                  <Plus className="w-5 h-5" color="#fff" />
+                </Button>
+              )}
             </CardHeader>
 
             <CardContent>
@@ -208,46 +211,47 @@ export function ProfileList({ user, staffs }: ProfileListProps) {
                   />
                 </div>
 
-                <div className="space-y-4">
-                  <h2 className="text-base font-semibold text-gray-500">
-                    Funcionarios
-                  </h2>
-                  {user.role === "ADMIN" && staffs.length > 0 && (
-                    <ScrollArea className="h-50 pr-2">
-                      <ul className="space-y-3">
-                        {staffs.map((staff) => (
-                          <li
-                            key={staff.id}
-                            className="flex items-center justify-between rounded-xl border p-3 shadow-sm bg-white hover:bg-gray-50 transition"
-                          >
-                            <div className="flex flex-col">
-                              <span className="font-medium text-gray-900">
-                                {staff.name}
-                              </span>
-                              <span className="text-sm text-gray-500">
-                                {staff.email}
-                              </span>
-                            </div>
-
-                            <Button
-                              type="button"
-                              variant="destructive"
-                              size="icon"
-                              onClick={(e) => {
-                                e.preventDefault();
-                                handleDeleteStaff(staff.id);
-                              }}
-                              className="cursor-pointer rounded-full"
+                {user.role === "ADMIN" && (
+                  <div className="space-y-4">
+                    <h2 className="text-base font-semibold text-gray-500">
+                      Funcionarios
+                    </h2>
+                    {user.role === "ADMIN" && staffs.length > 0 && (
+                      <ScrollArea className="h-50 pr-2">
+                        <ul className="space-y-3">
+                          {staffs.map((staff) => (
+                            <li
+                              key={staff.id}
+                              className="flex items-center justify-between rounded-xl border p-3 shadow-sm bg-white hover:bg-gray-50 transition"
                             >
-                              <Trash2 className="w-4 h-4" />
-                            </Button>
-                          </li>
-                        ))}
-                      </ul>
-                    </ScrollArea>
-                  )}
-                </div>
+                              <div className="flex flex-col">
+                                <span className="font-medium text-gray-900">
+                                  {staff.name}
+                                </span>
+                                <span className="text-sm text-gray-500">
+                                  {staff.email}
+                                </span>
+                              </div>
 
+                              <Button
+                                type="button"
+                                variant="destructive"
+                                size="icon"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  handleDeleteStaff(staff.id);
+                                }}
+                                className="cursor-pointer rounded-full"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </Button>
+                            </li>
+                          ))}
+                        </ul>
+                      </ScrollArea>
+                    )}
+                  </div>
+                )}
                 <Button
                   type="submit"
                   variant={"default"}
