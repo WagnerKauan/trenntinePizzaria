@@ -28,32 +28,36 @@ export async function signIn({
     };
   }
 
-  const user = await prisma.user.findFirst({
-    where: {
-      email: email,
-    },
-  });
+  try {
+    const user = await prisma.user.findFirst({
+      where: {
+        email: email,
+      },
+    });
 
+    if (!user) {
+      return {
+        error: "Usuário não encontrado.",
+      };
+    }
 
-  if (!user) {
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordValid) {
+      return {
+        error: "Senha incorreta.",
+      };
+    }
+
+    const token = await createToken(user.id);
+    await setTokenCookie(token);
+
     return {
-      error: "Usuário não encontrado.",
+      message: "Login efetuado com sucesso.",
+    };
+  } catch (err) {
+    return {
+      error: "Erro ao efetuar login.",
     };
   }
-
-
-  const isPasswordValid = await bcrypt.compare(password, user.password);
-
-  if (!isPasswordValid) {
-    return {
-      error: "Senha incorreta.",
-    };
-  }
-
-  const token = await createToken(user.id);
-  await setTokenCookie(token);
-
-  return {
-    message: "Login efetuado com sucesso.",
-  };
 }
