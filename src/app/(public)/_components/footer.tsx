@@ -65,7 +65,7 @@ export function Footer() {
             />
 
             <Image
-              src={"/image/methodPayments/Paypal.png"}
+              src={"/image/methodPayments/PayPal.png"}
               alt="Paypal"
               width={34}
               height={34}
