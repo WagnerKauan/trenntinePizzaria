@@ -29,7 +29,7 @@ export async function signIn({
   }
 
   try {
-  const user = await prisma.user.findFirst({ where: { email } });
+  const user = await prisma.user.findUnique({ where: { email } });
   console.log("user:", user);
 
   if (!user) return { error: "Usuário não encontrado." };
