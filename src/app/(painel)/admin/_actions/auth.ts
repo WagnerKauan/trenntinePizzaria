@@ -23,30 +23,27 @@ export async function signIn({
   const schema = signInSchema.safeParse({ email, password });
 
   if (!schema.success) {
-    return {
-      error: schema.error.issues[0].message,
-    };
+    return { error: schema.error.issues[0].message };
   }
 
   try {
-  const user = await prisma.user.findUnique({ where: { email } });
-  console.log("user:", user);
+    const user = await prisma.user.findUnique({ where: { email } });
 
-  if (!user) return { error: "Usuário não encontrado." };
+    if (!user) {
+      return { error: "Usuário não encontrado." };
+    }
 
-  console.log("user.password:", user.password);
-  const isPasswordValid = await bcrypt.compare(password, user.password);
-  console.log("isPasswordValid:", isPasswordValid);
+    const isPasswordValid = await bcrypt.compare(password, user.password);
 
-  const token = await createToken(user.id);
-  console.log("token criado:", token);
+    if (!isPasswordValid) {
+      return { error: "Senha incorreta." };
+    }
 
-  await setTokenCookie(token);
+    const token = await createToken(user.id);
+    await setTokenCookie(token);
 
-  return { message: "Login efetuado com sucesso." };
-} catch (err) {
-  console.error("Erro no login:", err);
-  return { error: "Erro ao efetuar login." };
-}
-
+    return { message: "Login efetuado com sucesso." };
+  } catch (err) {
+    return { error: "Erro ao efetuar login." };
+  }
 }
