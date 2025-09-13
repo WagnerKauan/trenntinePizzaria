@@ -10,7 +10,7 @@ export default async function Products() {
   const user = await getCurrentUser();
 
   if(!user) {
-    redirect("/signIn");
+    redirect("/admin");
   }
 
   return(

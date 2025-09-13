@@ -11,7 +11,7 @@ export default async function Promotions() {
   const user = await getCurrentUser();
 
   if(!user) {
-    redirect("/signIn");
+    redirect("/admin");
   }
 
   return (
