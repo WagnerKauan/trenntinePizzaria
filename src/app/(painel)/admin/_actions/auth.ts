@@ -29,35 +29,24 @@ export async function signIn({
   }
 
   try {
-    const user = await prisma.user.findFirst({
-      where: {
-        email: email,
-      },
-    });
+  const user = await prisma.user.findFirst({ where: { email } });
+  console.log("user:", user);
 
-    if (!user) {
-      return {
-        error: "Usuário não encontrado.",
-      };
-    }
+  if (!user) return { error: "Usuário não encontrado." };
 
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+  console.log("user.password:", user.password);
+  const isPasswordValid = await bcrypt.compare(password, user.password);
+  console.log("isPasswordValid:", isPasswordValid);
 
-    if (!isPasswordValid) {
-      return {
-        error: "Senha incorreta.",
-      };
-    }
+  const token = await createToken(user.id);
+  console.log("token criado:", token);
 
-    const token = await createToken(user.id);
-    await setTokenCookie(token);
+  await setTokenCookie(token);
 
-    return {
-      message: "Login efetuado com sucesso.",
-    };
-  } catch (err) {
-    return {
-      error: "Erro ao efetuar login.",
-    };
-  }
+  return { message: "Login efetuado com sucesso." };
+} catch (err) {
+  console.error("Erro no login:", err);
+  return { error: "Erro ao efetuar login." };
+}
+
 }
