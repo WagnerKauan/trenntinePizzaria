@@ -70,7 +70,7 @@ export function AreaMenu({ products }: AreaMenuProps) {
           />
         </div>
 
-        <div className="self-end">
+        <div className="self-end mt-5">
           <Select defaultValue={selectedCategory} onValueChange={selectFilter}>
             <SelectTrigger>
               <SelectValue placeholder="Selecione uma categoria" />
