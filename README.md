@@ -1,36 +1,60 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🏠 Trenntine Pizzaria
 
-## Getting Started
+![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=next.js&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
+![TailwindCSS](https://img.shields.io/badge/TailwindCSS-06B6D4?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![Vercel](https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)
 
-First, run the development server:
+**Trenntine Pizzaria** é uma aplicação web fullstack para pizzarias, permitindo que clientes façam pedidos online e que o dono gerencie produtos, promoções e pedidos em tempo real.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🔧 Stack
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Front-end:** Next.js, TypeScript, TailwindCSS, Shadcn UI, React Query  
+- **State Management:** Redux + Redux Persist  
+- **Back-end / Database:** Prisma, NeonDB  
+- **Autenticação & Segurança:** JWT, bcrypt  
+- **Outros:** Cloudinary (upload de imagens), Swiper (carrosséis)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## ⚡ Funcionalidades
 
-To learn more about Next.js, take a look at the following resources:
+### 👥 Cliente
+- Navegar por produtos em destaque e promoções ativas  
+- Adicionar produtos ao carrinho com **1 clique**  
+- Filtros de pesquisa e por categoria  
+- Carrinho com cálculo automático de preços e promoções  
+- Checkout em **steps**, com validação (React Hook Form + Zod)  
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 🧑‍💼 Dono / Administração
+- Gerenciar pedidos em tempo real (status: aguardando, em preparo, entregue)  
+- CRUD completo de produtos: imagens, tags, destaque, ativação/desativação  
+- Criar promoções: desconto percentual, combos ou globais  
+- Regras automáticas de aplicação de promoções no carrinho  
+- Controle de abertura/fechamento da pizzaria  
+- Criação de contas de funcionários com permissões limitadas
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## 🚀 Features Futuras
+- Integração com WhatsApp para envio de status dos pedidos  
+- Página de relatórios do estabelecimento  
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 📝 Aprendizado / Dificuldades
+- Organização de regras de negócio complexas (promoções e descontos)  
+- Cache e revalidação no Next.js  
+- UX responsivo com grids e carrosséis  
+- Estruturação de queries avançadas no Prisma  
+- Modularização do projeto com `_data-access` e `_actions`
+
+---
+
+## 🌐 Deploy
+- Projeto publicado na **Vercel**
+
+---
+
