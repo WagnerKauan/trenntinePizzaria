@@ -3,6 +3,7 @@ import { useCheckoutForm } from "../checkout-form";
 import { Input } from "@/components/ui/input";
 
 export function StepDadosPessoais({ form }: { form: ReturnType<typeof useCheckoutForm> }) {
+  
   return (
     <div className="space-y-4">
       <FormField

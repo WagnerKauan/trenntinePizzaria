@@ -42,6 +42,7 @@ export function CheckoutList() {
   const [loading, setLoading] = useState(false);
 
   const form = useCheckoutForm(checkoutData!);
+  
 
   const stepFields: Record<string, (keyof CheckoutFormData)[]> = {
     "Dados pessoais": ["name", "phone", "email"],
@@ -49,6 +50,7 @@ export function CheckoutList() {
     Pagamento: ["methodPayment", "changeFor"],
     Observações: ["notes"],
   };
+
 
   async function nextStep() {
     const fieldsToValidate = stepFields[steps[currentStep]];
