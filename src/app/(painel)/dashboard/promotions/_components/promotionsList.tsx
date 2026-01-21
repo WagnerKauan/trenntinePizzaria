@@ -277,24 +277,3 @@ export function PromotionsList({ promotions, user }: PromotionsListProps) {
     </Dialog>
   );
 }
-
-
-
-
-let jogo = 'minecraft'
-
-
-switch(jogo) {
-
-  case 'minecraft':
-    console.log('jogando minecraft')
-    break
-
-  case 'fortnite':
-    console.log('jogando fortnite')
-    break
-
-  case 'valorant':
-    console.log('jogando valorant')
-    break
-}
