@@ -45,7 +45,7 @@ export function PromotionsList({ promotions, user }: PromotionsListProps) {
     );
   }, [promotions]);
 
-  function handleEditProduct(promotion: Promotion) {
+  function handleEditPromotion(promotion: Promotion) {
     if(user.role !== "ADMIN") return;
     let rules: PromotionRule = {};
 
@@ -254,7 +254,7 @@ export function PromotionsList({ promotions, user }: PromotionsListProps) {
                         className={`border-none bg-white ${user.role === "ADMIN" && "cursor-pointer"}`}
                         variant={"outline"}
                         asChild
-                        onClick={() => handleEditProduct(promotion)}
+                        onClick={() => handleEditPromotion(promotion)}
                         disabled={user.role !== "ADMIN"}
                       >
                         <SquarePen className="w-5 h-5" />
